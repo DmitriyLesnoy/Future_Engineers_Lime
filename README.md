@@ -78,7 +78,7 @@ d) You will see the page of this version, scroll down and select the version for
 e) Next is the installation of the language file.
 f) When it is installed, run it, select the options you want and download the language.
 g) Then go to pychram, in the upper left corner there will be a File button
-h) Then click on the Settings button
+h) Then click on the Settings button 
 i) Then go to this section and select the language that you installed G
 3) Installing the project folder from the Github repository:
 a) You need to go to the link to the Github repository
