@@ -42,3 +42,13 @@ Finish - the robot travels a certain distance in time after passing 12 turns - 3
 Manual control - when you press the arrows on the computer keyboard, the robot moves in the appropriate direction or turns the servo - steering wheels.
 
 Setting up HSV. Here we can switch and watch masks of different colors. Also, here you can configure all the components and after setting or checking, save them and into a file from which values ​​for the filter will be taken in the future.
+
+To load a specific program into the robot, we use a special program called "Start the Robot". When it starts, a special window opens with an interface for transferring files, launching the program and transferring video from the robot.
+   There are several buttons in the window:
+             "Start download" - downloads a specific program to the robot.
+             "Start" - launches the program loaded on the robot.
+             "Raw" - runs the verification program
+             "Video" - launches video received in real time from the robot's camera
+             "Connect to robot" - opens a menu of available robots to connect
+
+We use the Wifi network to communicate with the robot.
