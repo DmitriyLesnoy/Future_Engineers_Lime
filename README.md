@@ -52,3 +52,75 @@ To load a specific program into the robot, we use a special program called "Star
              "Connect to robot" - opens a menu of available robots to connect
 
 We use the Wifi network to communicate with the robot.
+
+System requirements for working with the Future Engineers project:
+
+1. The operating system of the computer you will be working on is Windows 10
+2. Program interpreter of the python language - PyCharm.
+3. Programming language - Python 3.9.
+4. The presence of a browser
+5. Access to the repository on Github
+Installing the required components:
+1) Installing PyCharm
+a) Go to PyCharm's official website official website
+ 
+b) Next, select the Windows operating system.
+c) Click the download button.
+d) Next, the installation file will be downloaded
+ 
+e) After installing it open it and run the file
+f) Next, select the parameters you need.
+2) Installing python language version 3.9
+a) Go to python official site
+b) Click on the Download button
+c) Scroll down, you will see a list of versions that can be downloaded, select python 3.9
+d) You will see the page of this version, scroll down and select the version for the 64-bit operating system
+e) Next is the installation of the language file.
+f) When it is installed, run it, select the options you want and download the language.
+g) Then go to pychram, in the upper left corner there will be a File button
+h) Then click on the Settings button
+i) Then go to this section and select the language that you installed G
+3) Installing the project folder from the Github repository:
+a) You need to go to the link to the Github repository
+b) Then click on the green Code button, then download the zip archive
+c) The download of the project archive should start
+d) Then unzip the file to a regular folder
+Starting the robot:
+a) Insert the 4.2 Volt batteries into the battery compartment of the robot. Do not confuse + and - batteries to avoid consequences.
+a) Press the red power button on the robot.
+b) When you turn on the PyBoard microcontroller, a sound with an increase in tone will sound, wait until the Raspberry Pi microcomputer starts up, after it finishes starting it will play a melody - a double trill.
+Uploading the project to the robot:
+a) Open PyCharm, click on the File button in the upper left corner.
+b) Then click on the Open button
+c) Next, by clicking on the folder icons in the window that opens, select the folder in which the unzipped GitHub repository of the Future Engineers project is located.
+ 
+d) By default, the folder should be in this path, you can copy and paste into the search box C: \ Users \ user \ Downloads \ Future-Ingeneers
+ 
+e) You should open the project folder
+f) To upload files to the Raspberry Pi, you need to open the Windows network menu in the bottom right corner
+ 
+g) Select Lime network
+ 
+h) Then enter the password and connect to the network
+ 
+i) Now go back to the PyCharm program, in the project files menu, select and open the Start Robot program
+ 
+j) In the right-hand buttons at the top of the screen, click the Run button
+
+k) Select the Run button, in the small window that opens, select the Start robot program
+ 
+l) This window will open
+m) To load the program on the robot, click on the Load Start button and select the program to start
+ 
+n) To start starting the program on the robot, press the Start button
+o) To stop the program on the robot, press the Stop button
+p) To restart the program on the robot, click on the Raw button
+q) To enable video broadcast from the robot, click the Video button
+r) But before using all these buttons, you need to connect to the robot using the Connect to robot button.
+ 
+s) Clicking on the button will open a list of robots available to you, select the first option
+  
+t) When the robot and computer are connected to each other, there will be an inscription:
+Ways to connect to individual components:
+a) To connect directly to the Raspberry Pi, you need to remove the Micro SD, then connect it to the computer, or use a USB cable, micro USB to plug it into the microcomputer and then into the computer.
+b) To connect directly to PyBoard, you need to connect the Micro USB cable to the microcontroller connector and to the computer. 
