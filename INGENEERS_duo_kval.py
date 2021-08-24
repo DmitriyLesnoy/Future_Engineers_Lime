@@ -13,7 +13,7 @@ robot.set_camera(100,640,480)
 
 
 # global_speed = 115
-global_speed = 60
+global_speed = 70
 pause_finish = 1.7
 
 
@@ -25,10 +25,12 @@ porog_black_line_plus = 275
 # flag_qualification = False
 flag_qualification = True
 if flag_qualification:
-    global_speed = global_speed + 40
+    global_speed = global_speed + 0
     pause_finish = 1
     porog_black_line_plus+=35
     porog_black_line_minus+=35
+
+pause_finish=100/global_speed
 
 global_speed_old=global_speed
 
@@ -45,7 +47,6 @@ delta_red_minus = -20
 time_go_back_banka = 500
 
 # global_speed = 0
-
 
 # state = "Main move"
 state = "Manual move"
@@ -189,8 +190,8 @@ timer_state = 0
 
 
 def Find_black_line_left(frame, frame_show, flag_draw=True):
-    x1, y1 = 0, 235
-    x2, y2 = 30, 480
+    x1, y1 = 0, 205
+    x2, y2 = 20, 480
 
     # вырезаем часть изображение
     frame_crop = frame[y1:y2, x1:x2]
@@ -216,7 +217,7 @@ def Find_black_line_left(frame, frame_show, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour)
         # вычисляем площадь найденного контура
         area = cv2.contourArea(contour)
-        if area > 420:
+        if area > 410:
             # отрисовываем найденный контур
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
@@ -230,7 +231,7 @@ def Find_black_line_left(frame, frame_show, flag_draw=True):
     return max_y_left
 
 def Find_black_line_right(frame, frame_show, flag_draw=True):
-    x1, y1 = 640 - 30, 235
+    x1, y1 = 640 - 20, 205
     x2, y2 = 640, 480
 
     # вырезаем часть изображение
@@ -257,7 +258,7 @@ def Find_black_line_right(frame, frame_show, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour)
         # вычисляем площадь найденного контура
         area = cv2.contourArea(contour)
-        if area > 420:
+        if area > 410:
             # отрисовываем найденный контур
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
@@ -278,7 +279,7 @@ def Find_start_line(frame, frame_show, color, flag_draw=True):
     frame_crop_show = frame_show[y1:y2, x1:x2]
     # cv2.imshow("frame_crop", frame_crop)
     # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
     # переводим изображение с камеры в формат HSV
     # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
     # фильтруем по заданным параметрам
@@ -351,7 +352,7 @@ def Find_black_box_right(frame, frame_show, color, flag_draw=True):
     frame_crop_show = frame_show[y1:y2, x1:x2]
     # cv2.imshow("frame_crop", frame_crop)
     # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
     # переводим изображение с камеры в формат HSV
     # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
     # фильтруем по заданным параметрам
@@ -370,7 +371,7 @@ def Find_black_box_right(frame, frame_show, color, flag_draw=True):
         if area > 6000:
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
-            return True
+            return True,area
 
     return False
 
@@ -383,7 +384,7 @@ def Find_black_box_left(frame, frame_show, color, flag_draw=True):
     frame_crop_show = frame_show[y1:y2, x1:x2]
     # cv2.imshow("frame_crop", frame_crop)
     # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
     # переводим изображение с камеры в формат HSV
     # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
     # фильтруем по заданным параметрам
@@ -402,7 +403,7 @@ def Find_black_box_left(frame, frame_show, color, flag_draw=True):
         if area > 6000:
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
-            return True
+            return True,area
 
     return False
 
@@ -438,7 +439,7 @@ robot.serv(-35)
 robot.serv(0)
 robot.sound1()
 
-reg_move.set(0.3, 0.000000001, 0.04)
+reg_move.set(0.3, 0.0000001, 0.03)
 
 def go_back(angle, time1, time2):
     global timer_finish
@@ -514,22 +515,13 @@ while True:
         if k == 40:
             robot.move(-speed_manual, 0, 100, wait=False)
 
-        Find_box(frame, frame_show, "green")
         Find_black_box_right(frame, frame_show, "black")
         Find_black_box_left(frame, frame_show, "black")
-        # Find_box(frame, "red_up")
-        # отправляем команды на робота
-        # robot.move(manual_throttle, 0, 100, wait=False)
-        # robot.serv(manual_angle)
-        # телеметрия ручного управления
-        cv2.putText(frame_show, "throttle: " + str(round(manual_throttle, 1)), (10, 60),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        cv2.putText(frame_show, "angle: " + str(round(manual_angle, 1)), (10, 80),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
+        Find_black_line_left(frame, frame_show)
+        Find_black_line_right(frame, frame_show)
         put_telemetry(frame_show)
     elif state == "Main move":
+        pause_finish = 100 / global_speed
 
         is_orange = Find_start_line(frame, frame_show, "orange")
         is_blue = Find_start_line(frame, frame_show, "blue")
@@ -585,6 +577,8 @@ while True:
 
         porog=0
 
+        p_old=p
+
         p = reg_move.apply(porog, delta_reg)
 
         # if max_y_right == 0:
@@ -592,33 +586,38 @@ while True:
         # elif max_y_left==0:
         #     p+=(255-global_speed)/12
 
-        if max_y_right == 0 or flag_doezd_r:
-            p=18
-            global_speed=80
+        if (max_y_right == 0 or flag_doezd_r) and flag_doezd_l==0:
+            p=20
+            # global_speed=80
             if time.time()>=timer_turn_r+0.7:
-                p=25
+                p=28
             flag_doezd_r=True
-            if 150 > max_y_right>65:
+            if max_y_right>60:
                 flag_doezd_r=False
-                global_speed=global_speed_old
+                # global_speed=global_speed_old
         else:
             timer_turn_r=time.time()
 
-        if max_y_left==0 or flag_doezd_l:
-            p=-22
-            global_speed=80
+        if (max_y_left==0 or flag_doezd_l) and flag_doezd_r==0:
+            p=-20
+            # global_speed=80
             if time.time()>=timer_turn_l+0.7:
-                p=-30
+                p=-28
             flag_doezd_l = True
-            if 150 > max_y_left > 55:
+            if max_y_left > 60:
                 flag_doezd_l = False
-                global_speed=global_speed_old
+                # global_speed=global_speed_old
         else:
             timer_turn_l=time.time()
 
+        # if max_y_right == 0 and max_y_left==0:
+        #     if direction==1:
+        #         p=18
+        #     if direction==-1:
+        #         p=-18
 
-        if -5<p<5:
-            p=0
+        # if -5<p<5:
+        #     p=0
 
         robot.serv(-p + delta_banka)
 

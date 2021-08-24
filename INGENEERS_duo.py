@@ -9,27 +9,23 @@ robot = rapi.RobotAPI(flag_pyboard=True)
 robot.set_camera(100,640,480)
 
 ############################################################
-# flag_qualification=True
+flag_qualification=False
 
 
 # global_speed = 115
 global_speed = 70
-pause_finish = 1.9
-
-# flag_qualification = False
-flag_qualification = False
-if flag_qualification:
-    global_speed = global_speed + 40
-    pause_finish = 0.4
+pause_  = 0.4
 
 global_speed_old=global_speed
+
+pause_finish=100/global_speed
 
 delta_reg = 0
 
 p=0
 
-delta_green = 30
-delta_red = -30
+delta_green = 32
+delta_red = -32
 
 # global_speed = 0
 
@@ -50,6 +46,10 @@ flag_line=False
 
 timer_turn_l=0
 timer_turn_r=0
+
+
+timer_sec=None
+secundomer=0
 
 ############################################################
 
@@ -176,7 +176,7 @@ timer_state = 0
 
 
 def Find_black_line_left(frame, frame_show, flag_draw=True):
-    x1, y1 = 0, 240
+    x1, y1 = 0, 210
     x2, y2 = 20, 480
 
     # вырезаем часть изображение
@@ -203,7 +203,7 @@ def Find_black_line_left(frame, frame_show, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour)
         # вычисляем площадь найденного контура
         area = cv2.contourArea(contour)
-        if area > 320:
+        if area > 400:
             # отрисовываем найденный контур
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
@@ -217,7 +217,7 @@ def Find_black_line_left(frame, frame_show, flag_draw=True):
     return max_y_left
 
 def Find_black_line_right(frame, frame_show, flag_draw=True):
-    x1, y1 = 640 - 20, 240
+    x1, y1 = 640 - 20, 210
     x2, y2 = 640, 480
 
     # вырезаем часть изображение
@@ -244,7 +244,7 @@ def Find_black_line_right(frame, frame_show, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour)
         # вычисляем площадь найденного контура
         area = cv2.contourArea(contour)
-        if area > 320:
+        if area > 400:
             # отрисовываем найденный контур
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
@@ -265,7 +265,7 @@ def Find_start_line(frame, frame_show, color, flag_draw=True):
     frame_crop_show = frame_show[y1:y2, x1:x2]
     # cv2.imshow("frame_crop", frame_crop)
     # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
     # переводим изображение с камеры в формат HSV
     # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
     # фильтруем по заданным параметрам
@@ -416,6 +416,8 @@ def put_telemetry(frame_show):
     serv,ost=divmod(p,1)
     cv2.putText(frame_show, "Serv: " + str(serv), (10, 80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
                 (255, 0, 0), 2)
+    cv2.putText(frame_show, "Time: " + str(secundomer), (500, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
     robot.set_frame(frame_show, 15)
 
 
@@ -424,7 +426,7 @@ robot.serv(-35)
 robot.serv(0)
 robot.sound1()
 
-reg_move.set(0.3, 0.000001, 0.06)
+reg_move.set(0.5, 0.0000000001, 0.05)
 
 def go_back(angle, time1, time2):
     global timer_finish
@@ -479,11 +481,11 @@ while True:
         # ручное управление
 
         if k == 37:
-            manual_serv = 25
+            manual_serv = 40
             robot.serv(manual_serv)
             print(manual_serv)
         if k == 39:
-            manual_serv = -25
+            manual_serv = -40
             robot.serv(manual_serv)
             print(manual_serv)
         if k == 32:
@@ -495,23 +497,15 @@ while True:
         if k == 40:
             robot.move(-speed_manual, 0, 100, wait=False)
 
+        Find_box(frame, frame_show, "red_up")
         Find_box(frame, frame_show, "green")
-        Find_black_box_right(frame, frame_show, "black")
-        Find_black_box_left(frame, frame_show, "black")
-        # Find_box(frame, "red_up")
-        # отправляем команды на робота
-        # robot.move(manual_throttle, 0, 100, wait=False)
-        # robot.serv(manual_angle)
-        # телеметрия ручного управления
-        cv2.putText(frame_show, "throttle: " + str(round(manual_throttle, 1)), (10, 60),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        cv2.putText(frame_show, "angle: " + str(round(manual_angle, 1)), (10, 80),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
+        Find_black_line_left(frame, frame_show)
+        Find_black_line_right(frame, frame_show)
         put_telemetry(frame_show)
     if state == "Main move":
-
+        if timer_sec==None:
+            timer_sec=time.time()
+        secundomer=time.time()-timer_sec
         is_orange = Find_start_line(frame, frame_show, "orange")
         is_blue = Find_start_line(frame, frame_show, "blue")
 
@@ -532,6 +526,7 @@ while True:
             if time.time()>=timer_line+0.05 and flag_line:
                 flag_line=False
                 count_lines+=1
+
         if count_lines >= 12:
             # if time.time()>timer_state+1:
             if timer_finish is None:
@@ -542,6 +537,9 @@ while True:
                     global_speed = 0
                     robot.beep()
                     state = "Finish"
+
+
+
 
         delta_banka = 0
         delta_speed = 0
@@ -568,21 +566,18 @@ while True:
 
         if not flag_qualification:
             cord_red_banka, area_red_banka = Find_box(frame, frame_show, "red_up")
-            if area_red_banka is not None:
+            if area_red_banka is not None and area_red_banka>2000:
                 delta_banka = delta_red
-                if area_red_banka > 13200:
-                    go_back(30, 650, 50)
+                # if area_red_banka > 11000 and 180<cord_red_banka:
+                #     go_back(30, 500, 80)
 
             cord_green_banka, area_green_banka = Find_box(frame, frame_show, "green")
-            if area_green_banka is not None:
+            if area_green_banka is not None and area_green_banka>2000:
                 delta_banka = delta_green
-                if area_green_banka > 13200:
-                    go_back(-30, 650, 50)
+                # if area_green_banka > 11000 and cord_green_banka<(640-180):
+                #     go_back(-30, 500, 80)
 
             if area_green_banka is not None and area_red_banka is not None:
-
-                # delta_speed = -10
-
                 if area_red_banka > area_green_banka:
                     delta_banka = delta_red
                 else:
@@ -594,7 +589,7 @@ while True:
 
         delta_reg = max_y_right - max_y_left
 
-        porog=-25
+        porog=0
 
         p_old = p
 
@@ -606,38 +601,37 @@ while True:
         #     p+=(255-global_speed)/12
 
         if max_y_right == 0 or flag_doezd_r:
-            p=22
+            p=23
             # global_speed=100
-            if time.time()>=timer_turn_r+0.5:
-                p=30
+            if time.time()>=timer_turn_r+0.7:
+                p=38
             flag_doezd_r=True
-            if max_y_right>=40:
+            if max_y_right>60:
                 flag_doezd_r=False
                 # global_speed=global_speed_old
         else:
             timer_turn_r=time.time()
 
         if max_y_left==0 or flag_doezd_l:
-            p=-22
+            p=-23
             # global_speed=100
-            if time.time()>=timer_turn_l+0.7:
-                p=-30
+            if time.time()>=timer_turn_l+0.3:
+                p=-38
             flag_doezd_l = True
-            if max_y_left >=40:
+            if max_y_left >60:
                 flag_doezd_l = False
                 # global_speed=global_speed_old
         else:
             timer_turn_l=time.time()
 
-        if max_y_right == 0 and max_y_left==0:
-            if direction==1:
-                p=p_old+15
-            if direction==-1:
-                p=p_old-15
+        # if max_y_right == 0 and max_y_left==0:
+        #     if direction==1:
+        #         p=p_old+15
+        #     if direction==-1:
+        #         p=p_old-15
 
-
-        # if -5<p<5:
-        #     p=0
+        if -5<p<5:
+            p=0
 
         robot.serv(-p + delta_banka)
 

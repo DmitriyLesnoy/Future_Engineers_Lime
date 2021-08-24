@@ -12,20 +12,21 @@ robot.set_camera(100,640,480)
 flag_qualification=False
 
 
-
-global_speed = 70
-pause_finish= 0.4
+# global_speed = 115
+global_speed = 95
+pause_  = 0.4
 
 global_speed_old=global_speed
 
-pause_finish=75/global_speed
+pause_finish=100/global_speed
 
 delta_reg = 0
 
+porog = 0
 p=0
 
-delta_green = 30
-delta_red = -30
+delta_green = 28
+delta_red = -28
 
 # global_speed = 0
 
@@ -415,7 +416,7 @@ def put_telemetry(frame_show):
                 (255, 0, 255), 2)
     serv,ost=divmod(p,1)
     cv2.putText(frame_show, "Serv: " + str(serv), (10, 80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                (255, 120, 120), 2)
+                (255, 0, 0), 2)
     cv2.putText(frame_show, "Time: " + str(secundomer), (500, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
                 (255, 255, 255), 2)
     robot.set_frame(frame_show, 15)
@@ -471,11 +472,9 @@ while True:
         robot.serv(0)
 
     if k==187:
-        global_speed+=2
-        global_speed_old+=2
+        global_speed+=1
     elif k==189:
-        global_speed-=2
-        global_speed_old-=2
+        global_speed-=1
     if k==66:
         robot.tone(3100,300)
 
@@ -483,11 +482,11 @@ while True:
         # ручное управление
 
         if k == 37:
-            manual_serv = 25
+            manual_serv = 40
             robot.serv(manual_serv)
             print(manual_serv)
         if k == 39:
-            manual_serv = -25
+            manual_serv = -40
             robot.serv(manual_serv)
             print(manual_serv)
         if k == 32:
@@ -512,10 +511,16 @@ while True:
         is_blue = Find_start_line(frame, frame_show, "blue")
 
         if direction==None:
+            porog = 0
+
             if is_orange:
                 direction = 1
+                porog=22
+                delta_red=-22
             if is_blue:
                 direction = -1
+                porog=-22
+                delta_green=22
 
         else:
             if direction==1 and is_orange:
@@ -525,7 +530,7 @@ while True:
                 flag_line=True
                 timer_line=time.time()
 
-            if time.time()>=timer_line+0.02 and flag_line:
+            if time.time()>=timer_line+0.05 and flag_line:
                 flag_line=False
                 count_lines+=1
 
@@ -536,12 +541,11 @@ while True:
 
             else:
                 if time.time() > timer_finish:
-                    global_speed = -2
-                    global_speed_old=-2
                     robot.serv(0)
+                    robot.move(-5,0,10,wait=True)
                     robot.beep()
                     state = "Finish"
-                    state = "Finish"
+                    exit()
 
 
 
@@ -571,16 +575,16 @@ while True:
 
         if not flag_qualification:
             cord_red_banka, area_red_banka = Find_box(frame, frame_show, "red_up")
-            if area_red_banka is not None and area_red_banka>2000:
+            if area_red_banka is not None:
                 delta_banka = delta_red
-                if area_red_banka > 11000 and 180<cord_red_banka:
-                    go_back(30, 500, 80)
+                # if area_red_banka > 11000 and 180<cord_red_banka:
+                #     go_back(30, 500, 80)
 
             cord_green_banka, area_green_banka = Find_box(frame, frame_show, "green")
-            if area_green_banka is not None and area_green_banka>2000:
+            if area_green_banka is not None:
                 delta_banka = delta_green
-                if area_green_banka > 11000 and cord_green_banka<(640-180):
-                    go_back(-30, 500, 80)
+                # if area_green_banka > 11000 and cord_green_banka<(640-180):
+                #     go_back(-30, 500, 80)
 
             if area_green_banka is not None and area_red_banka is not None:
                 if area_red_banka > area_green_banka:
@@ -594,11 +598,13 @@ while True:
 
         delta_reg = max_y_right - max_y_left
 
-        porog=0
+
+
+
 
         p_old = p
 
-        p = reg_move.apply(porog, delta_reg)
+        p = reg_move.apply(porog,delta_reg)
 
         # if max_y_right == 0:
         #     p-=(255-global_speed)/12
@@ -608,8 +614,8 @@ while True:
         if max_y_right == 0 or flag_doezd_r:
             p=23
             # global_speed=100
-            if time.time()>=timer_turn_r+0.4:
-                p=35
+            if time.time()>=timer_turn_r+0.7:
+                p=38
             flag_doezd_r=True
             if max_y_right>60:
                 flag_doezd_r=False
@@ -620,8 +626,8 @@ while True:
         if max_y_left==0 or flag_doezd_l:
             p=-23
             # global_speed=100
-            if time.time()>=timer_turn_l+0.4:
-                p=-35
+            if time.time()>=timer_turn_l+0.3:
+                p=-38
             flag_doezd_l = True
             if max_y_left >60:
                 flag_doezd_l = False
@@ -635,19 +641,10 @@ while True:
         #     if direction==-1:
         #         p=p_old-15
 
-
-        if -6<(-p + delta_banka)<6:
-            delta_banka=delta_banka*1.8
-
-        # if -5<p<5:
-        #     p=0
+        if -5<p<5:
+            p=0
 
         robot.serv(-p + delta_banka)
-
-        if delta_banka==0:
-            global_speed=global_speed_old+25
-        else:
-            global_speed=global_speed_old
 
         robot.move(global_speed,0 , 100, wait=False)
 
