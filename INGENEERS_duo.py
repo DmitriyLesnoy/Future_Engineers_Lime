@@ -176,7 +176,7 @@ timer_state = 0
 
 
 def Find_black_line_left(frame, frame_show, flag_draw=True):
-    x1, y1 = 0, 210
+    x1, y1 = 0, 220
     x2, y2 = 20, 480
 
     # вырезаем часть изображение
@@ -217,7 +217,7 @@ def Find_black_line_left(frame, frame_show, flag_draw=True):
     return max_y_left
 
 def Find_black_line_right(frame, frame_show, flag_draw=True):
-    x1, y1 = 640 - 20, 210
+    x1, y1 = 640 - 20, 220
     x2, y2 = 640, 480
 
     # вырезаем часть изображение
@@ -426,7 +426,7 @@ robot.serv(-35)
 robot.serv(0)
 robot.sound1()
 
-reg_move.set(0.5, 0.0000000001, 0.05)
+reg_move.set(0.5, 0.0000000001, 0.07)
 
 def go_back(angle, time1, time2):
     global timer_finish
@@ -589,7 +589,7 @@ while True:
 
         delta_reg = max_y_right - max_y_left
 
-        porog=0
+        porog=-15
 
         p_old = p
 
@@ -600,11 +600,11 @@ while True:
         # elif max_y_left==0:
         #     p+=(255-global_speed)/12
 
-        if max_y_right == 0 or flag_doezd_r:
-            p=23
+        if (max_y_right == 0 or flag_doezd_r) and not flag_doezd_l:
+            p=26
             # global_speed=100
-            if time.time()>=timer_turn_r+0.7:
-                p=38
+            if time.time()>=timer_turn_r+0.6:
+                p=35
             flag_doezd_r=True
             if max_y_right>60:
                 flag_doezd_r=False
@@ -612,11 +612,11 @@ while True:
         else:
             timer_turn_r=time.time()
 
-        if max_y_left==0 or flag_doezd_l:
-            p=-23
+        if (max_y_left==0 or flag_doezd_l) and not flag_doezd_r:
+            p=-26
             # global_speed=100
-            if time.time()>=timer_turn_l+0.3:
-                p=-38
+            if time.time()>=timer_turn_l+0.6:
+                p=-35
             flag_doezd_l = True
             if max_y_left >60:
                 flag_doezd_l = False
@@ -624,11 +624,14 @@ while True:
         else:
             timer_turn_l=time.time()
 
-        # if max_y_right == 0 and max_y_left==0:
-        #     if direction==1:
-        #         p=p_old+15
-        #     if direction==-1:
-        #         p=p_old-15
+        if max_y_right == 0 and max_y_left==0:
+            if direction==1:
+                p=p_old+20
+            if direction==-1:
+                p=p_old-20
+
+        if -5<(-p+delta_banka)<5:
+            delta_banka=delta_banka*2
 
         if -5<p<5:
             p=0

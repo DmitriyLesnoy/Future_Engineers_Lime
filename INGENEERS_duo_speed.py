@@ -18,7 +18,7 @@ pause_finish= 0.4
 
 global_speed_old=global_speed
 
-pause_finish=75/global_speed
+pause_finish=70/global_speed
 
 delta_reg = 0
 
@@ -573,13 +573,13 @@ while True:
             cord_red_banka, area_red_banka = Find_box(frame, frame_show, "red_up")
             if area_red_banka is not None and area_red_banka>2000:
                 delta_banka = delta_red
-                if area_red_banka > 11000 and 180<cord_red_banka:
+                if area_red_banka > 12000 and 195<cord_red_banka:
                     go_back(30, 500, 80)
 
             cord_green_banka, area_green_banka = Find_box(frame, frame_show, "green")
             if area_green_banka is not None and area_green_banka>2000:
                 delta_banka = delta_green
-                if area_green_banka > 11000 and cord_green_banka<(640-180):
+                if area_green_banka > 12000 and cord_green_banka<(640-195):
                     go_back(-30, 500, 80)
 
             if area_green_banka is not None and area_red_banka is not None:
@@ -605,49 +605,47 @@ while True:
         # elif max_y_left==0:
         #     p+=(255-global_speed)/12
 
-        if max_y_right == 0 or flag_doezd_r:
-            p=23
+        if (max_y_right == 0 or flag_doezd_r) and not flag_doezd_l:
+            p=26
             # global_speed=100
-            if time.time()>=timer_turn_r+0.4:
+            if time.time()>=timer_turn_r+0.5:
                 p=35
             flag_doezd_r=True
-            if max_y_right>60:
+            if max_y_right>70:
                 flag_doezd_r=False
                 # global_speed=global_speed_old
         else:
             timer_turn_r=time.time()
 
-        if max_y_left==0 or flag_doezd_l:
-            p=-23
+        if (max_y_left==0 or flag_doezd_l) and not flag_doezd_r:
+            p=-26
             # global_speed=100
-            if time.time()>=timer_turn_l+0.4:
+            if time.time()>=timer_turn_l+0.5:
                 p=-35
             flag_doezd_l = True
-            if max_y_left >60:
+            if max_y_left >70:
                 flag_doezd_l = False
                 # global_speed=global_speed_old
         else:
             timer_turn_l=time.time()
 
-        # if max_y_right == 0 and max_y_left==0:
-        #     if direction==1:
-        #         p=p_old+15
-        #     if direction==-1:
-        #         p=p_old-15
+        if max_y_right == 0 and max_y_left==0:
+            if direction==1:
+                p=p_old+20
+            if direction==-1:
+                p=p_old-20
 
+        if -5<(-p+delta_banka)<5:
+            delta_banka=delta_banka*2
 
-        if -6<(-p + delta_banka)<6:
-            delta_banka=delta_banka*1.8
+        if -5<p<5:
+            p=0
 
-        # if -5<p<5:
-        #     p=0
-
-        robot.serv(-p + delta_banka)
-
-        if delta_banka==0:
-            global_speed=global_speed_old+25
+        if delta_banka==0 and not flag_doezd_l and not flag_doezd_r:
+            global_speed=global_speed_old+15
         else:
             global_speed=global_speed_old
+        robot.serv(-p + delta_banka)
 
         robot.move(global_speed,0 , 100, wait=False)
 

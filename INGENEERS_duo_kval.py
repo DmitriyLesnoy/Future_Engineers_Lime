@@ -13,7 +13,7 @@ robot.set_camera(100,640,480)
 
 
 # global_speed = 115
-global_speed = 70
+global_speed = 115
 pause_finish = 1.7
 
 
@@ -65,6 +65,10 @@ flag_line=False
 timer_turn_l=0
 
 timer_turn_r=0
+
+timer_sec=None
+secundomer=0
+
 ############################################################
 
 # 1- по часовой, -1 против часовой стрелки
@@ -431,6 +435,8 @@ def put_telemetry(frame_show):
     serv,ost=divmod(p,1)
     cv2.putText(frame_show, "Serv: " + str(serv), (10, 80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
                 (255, 0, 0), 2)
+    cv2.putText(frame_show, "Time: " + str(secundomer), (500, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
     robot.set_frame(frame_show, 15)
 
 
@@ -521,6 +527,10 @@ while True:
         Find_black_line_right(frame, frame_show)
         put_telemetry(frame_show)
     elif state == "Main move":
+        if timer_sec==None:
+            timer_sec=time.time()
+        secundomer=time.time()-timer_sec
+
         pause_finish = 100 / global_speed
 
         is_orange = Find_start_line(frame, frame_show, "orange")

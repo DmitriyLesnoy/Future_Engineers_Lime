@@ -14,11 +14,11 @@ flag_qualification=False
 
 # global_speed = 115
 global_speed = 95
-pause_  = 0.4
+pause_finish= 0.4
 
 global_speed_old=global_speed
 
-pause_finish=100/global_speed
+pause_finish=80/global_speed
 
 delta_reg = 0
 
@@ -282,7 +282,7 @@ def Find_start_line(frame, frame_show, color, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour)
         # вычисляем площадь найденного контура
         area = cv2.contourArea(contour)
-        if area > 500:
+        if area > 300:
             if flag_draw:
                 cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
             return True
@@ -427,7 +427,7 @@ robot.serv(-35)
 robot.serv(0)
 robot.sound1()
 
-reg_move.set(0.5, 0.0000000001, 0.05)
+reg_move.set(0.3, 0.0000001, 0.04)
 
 def go_back(angle, time1, time2):
     global timer_finish
@@ -542,10 +542,9 @@ while True:
             else:
                 if time.time() > timer_finish:
                     robot.serv(0)
-                    robot.move(-5,0,10,wait=True)
+                    robot.move(-5,0,5,wait=True)
                     robot.beep()
                     state = "Finish"
-                    exit()
 
 
 
@@ -611,10 +610,10 @@ while True:
         # elif max_y_left==0:
         #     p+=(255-global_speed)/12
 
-        if max_y_right == 0 or flag_doezd_r:
+        if (max_y_right == 0 or flag_doezd_r) and not flag_doezd_l:
             p=23
             # global_speed=100
-            if time.time()>=timer_turn_r+0.7:
+            if time.time()>=timer_turn_r+0.2:
                 p=38
             flag_doezd_r=True
             if max_y_right>60:
@@ -623,10 +622,10 @@ while True:
         else:
             timer_turn_r=time.time()
 
-        if max_y_left==0 or flag_doezd_l:
+        if (max_y_left==0 or flag_doezd_l) and not flag_doezd_r:
             p=-23
             # global_speed=100
-            if time.time()>=timer_turn_l+0.3:
+            if time.time()>=timer_turn_l+0.2:
                 p=-38
             flag_doezd_l = True
             if max_y_left >60:
@@ -640,6 +639,9 @@ while True:
         #         p=p_old+15
         #     if direction==-1:
         #         p=p_old-15
+
+        if -5<(-p+delta_banka)<5:
+            delta_banka=delta_banka*2
 
         if -5<p<5:
             p=0
