@@ -55,7 +55,7 @@ To load a specific program into the robot, we use a special program called "Star
 
 We use the Wifi network to communicate with the robot.
 
-SYSTEMREQUEIMENTS FOR WORKING WITH THE FUTURE ENGINEERS PROGECT
+SYSTEMRE QUEIMENTS FOR WORKING WITH THE FUTURE ENGINEERS PROGECT
 
 1. The operating system of the computer you will be working on is Windows 10
 2. Program interpreter of the python language - PyCharm.
