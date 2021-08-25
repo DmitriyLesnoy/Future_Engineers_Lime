@@ -63,28 +63,40 @@ System requirements for working with the Future Engineers project:
 Installing the required components:
 1) Installing PyCharm
 a) Go to PyCharm's official website official website
- 
+  ![image](https://user-images.githubusercontent.com/64408062/130711781-79ee401e-7e02-49a1-920c-66a4b4726c01.png)
 b) Next, select the Windows operating system.
 c) Click the download button.
 d) Next, the installation file will be downloaded
- 
+ ![image](https://user-images.githubusercontent.com/64408062/130711803-9c715735-c8d1-44ce-8397-c6d14d69ca01.png)
 e) After installing it open it and run the file
 f) Next, select the parameters you need.
 2) Installing python language version 3.9
 a) Go to python official site
+![image](https://user-images.githubusercontent.com/64408062/130711815-037e32f3-28fa-4c32-aa2f-7c8cdf1639d9.png)
 b) Click on the Download button
+![image](https://user-images.githubusercontent.com/64408062/130711818-e4e1a168-6aca-40c4-876d-6a86ae7e7f04.png)
 c) Scroll down, you will see a list of versions that can be downloaded, select python 3.9
+![image](https://user-images.githubusercontent.com/64408062/130711832-22fbb7de-7dd7-4060-b9af-20078230a964.png)
 d) You will see the page of this version, scroll down and select the version for the 64-bit operating system
+![image](https://user-images.githubusercontent.com/64408062/130711836-78dec598-ce76-4a57-b5db-4f0bb30ba518.png)
 e) Next is the installation of the language file.
 f) When it is installed, run it, select the options you want and download the language.
 g) Then go to pychram, in the upper left corner there will be a File button
+![image](https://user-images.githubusercontent.com/64408062/130711840-0d8f880e-082b-4df2-834f-96fa90feb252.png)
 h) Then click on the Settings button 
+![image](https://user-images.githubusercontent.com/64408062/130711851-316e2926-6819-4b02-af27-55947fc719c1.png)
 i) Then go to this section and select the language that you installed G
+![image](https://user-images.githubusercontent.com/64408062/130711858-8a8aa72c-8fae-4fef-ae64-9f9a2603bfbf.png)
 3) Installing the project folder from the Github repository:
 a) You need to go to the link to the Github repository
+![image](https://user-images.githubusercontent.com/64408062/130711877-10222987-3505-4b5d-99ce-d9abd88591ed.png)
 b) Then click on the green Code button, then download the zip archive
+![image](https://user-images.githubusercontent.com/64408062/130711889-7760187f-8e9c-4201-8ae7-df344aa634f7.png)
 c) The download of the project archive should start
+![image](https://user-images.githubusercontent.com/64408062/130711902-bbe2a6b4-dd43-4564-84f8-512b6933b523.png)
 d) Then unzip the file to a regular folder
+![image](https://user-images.githubusercontent.com/64408062/130711920-75e5f5cc-c9a7-4fbc-87e3-0bccbd82862f.png)
+
 Starting the robot:
 a) Insert the 4.2 Volt batteries into the battery compartment of the robot. Do not confuse + and - batteries to avoid consequences.
 a) Press the red power button on the robot.
