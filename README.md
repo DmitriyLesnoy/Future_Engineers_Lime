@@ -113,7 +113,8 @@ d) Then unzip the file to a regular folder
 
 
 Starting the robot:
-a) Insert the 4.2 Volt batteries into the battery compartment of the robot. Do not confuse + and - batteries to avoid consequences.
+
+a) Insert the 3.7 Volt accumulators 18650 into the battery compartment of the robot. Do not confuse + and - batteries to avoid consequences.
 b) Press the red power button on the robot.
 c) When you turn on the PyBoard microcontroller, a sound with an increase in tone will sound, wait until the Raspberry Pi microcomputer starts up, after it finishes starting it will play a melody - a double trill.
 Uploading the project to the robot:
