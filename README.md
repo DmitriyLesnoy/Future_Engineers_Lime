@@ -6,7 +6,9 @@ In the development of the LIME team project for the WRO competition in
 the Future Engineers category was attended by Lineisky Akim -
 programmer, designer, Ivan Terekhov - engineer,
 electronics engineer, Glamozdin Yuri - our mentor and trainer.
-                                                                                                                                                                                                                                                                                                                                     
+                  
+       PROGRAMM ALGORINT:
+                  
 The robot was programmed in Python version 3.9.3. The interpreter was PyCharm.
                                                                                                                 
 To connect the robot and the computer, the robot creates a wi-fi access point to which the computer is connected. Next, using the StartRobot application and the cv2 library, we load the program file onto the Raspberry microcomputer. He saves it to the SD card and then executes the code.
@@ -53,7 +55,7 @@ To load a specific program into the robot, we use a special program called "Star
 
 We use the Wifi network to communicate with the robot.
 
-System requirements for working with the Future Engineers project:
+SYSTEMREQUEIMENTS FOR WORKING WITH THE FUTURE ENGINEERS PROGECT
 
 1. The operating system of the computer you will be working on is Windows 10
 2. Program interpreter of the python language - PyCharm.
