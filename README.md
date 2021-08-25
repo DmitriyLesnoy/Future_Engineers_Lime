@@ -177,4 +177,5 @@ t) When the robot and computer are connected to each other, there will be an ins
 
 Ways to connect to individual components:
 a) To connect directly to the Raspberry Pi, you need to remove the Micro SD, then connect it to the computer, or use a USB cable, micro USB to plug it into the microcomputer and then into the computer.
+
 b) To connect directly to PyBoard, you need to connect the Micro USB cable to the microcontroller connector and to the computer. 
