@@ -21,8 +21,8 @@ pause_finish = 1.2
 #установка скорости и времени финиша
 
 # пременные порога черной линии
-porog_black_line_minus = 280
-porog_black_line_plus = 300
+porog_black_line_minus = 270
+porog_black_line_plus = 310
 
 # flag_qualification = False
 flag_qualification = False
@@ -34,11 +34,11 @@ if flag_qualification:
 #установка значений для квалификации и основного задания
 
 
-delta_green_plus = 20
+delta_green_plus = 22
 delta_red_plus = -22
 
-delta_green_minus = 17
-delta_red_minus = -17
+delta_green_minus = 18
+delta_red_minus = -18
 
 time_go_back_banka = 500
 #установка значений для красных и зеленых кубиков
@@ -281,7 +281,7 @@ def Find_box(frame, frame_show, color, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour)
         # вычисляем площадь найденного контура
         area = cv2.contourArea(contour)
-        if area > 800:
+        if area > 700:
             if flag_draw:
                 c = (0, 0, 255)
                 if color == "green":
@@ -623,7 +623,7 @@ while True:
         max_y = Find_black_line(frame, frame_show, direction)
         # робот определяет высоту от нижнего края экрана до нижней точки видимого контура в границах в зависимоссти от направления
         if max_y > 0:
-            reg_move.set(0.5, 0.0000001, 0.07)
+            reg_move.set(0.4, 0.00001, 0.08)
             # если высота положительна то робот едет по pid регулятору
             porog = porog_black_line_minus
             if direction > 0:
@@ -637,9 +637,9 @@ while True:
             # включение двигателя на определенную скорость
         else:
             if direction == -1:
-                go_back(40, 370, 200)
+                go_back(50, 370, 200)
             else:
-                go_back(-40, 370, 200)
+                go_back(-50, 370, 200)
             # в зависимости от направления робот отъезжает назад чтобы не было столкновения с бортиком
         put_telemetry(frame_show)
         # вывод телеметрии
