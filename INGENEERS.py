@@ -5,103 +5,80 @@ import RobotAPI as rapi
 import json
 import regulators
 
-#импорт необходимых библиотек
+# импорт необходимых библиотек
+from INGENEERS import reg_move
 
-robot = rapi.RobotAPI(flag_pyboard=True)
-robot.set_camera(100,640,480)
-#инициализация камеры
+robot = rapi.RobotAPI(flag_pyboard=True) # инициализация робота
+robot.set_camera(100,640,480) # инициализация камеры
 
-############################################################
-# flag_qualification=True
+flag_qualification=False # установление флага квалификации на значение ложь
 
+global_speed = 70 # установление скорости езды робота
 
-# global_speed = 115
-global_speed = 60
-pause_finish = 1.2
-#установка скорости и времени финиша
+global_speed_old=global_speed # утсановление значения переменной для сорости
 
-# пременные порога черной линии
-porog_black_line_minus = 270
-porog_black_line_plus = 310
+pause_finish=90/global_speed # установление паузы финиша
 
-# flag_qualification = False
-flag_qualification = False
-if flag_qualification:
-    global_speed = global_speed + 60
-    pause_finish = 0.3
-    porog_black_line_plus+=35
-    porog_black_line_minus+=35
-#установка значений для квалификации и основного задания
+delta_reg = 0 # обнуление переменной разности датчиков
+
+p=0 # обнуление переменной регулятора
+delta_reg_old=0 # обнудение переменнйо прошлого показания delta_reg
+delta_banka=0 # обнуление перемменной объезда дорожных знаков
+
+state = "Manual move" # начальная стадия программы
 
 
-delta_green_plus = 22
-delta_red_plus = -22
+povorot = False # обнуление фалага экстренного поворота
 
-delta_green_minus = 18
-delta_red_minus = -18
+flag_doezd_r=False # обнуление флага поворота направо
+flag_doezd_l=False # обнуление флага поворота налево
 
-time_go_back_banka = 500
-#установка значений для красных и зеленых кубиков
+timer_finish = None # обнуление таймера финиша
+timer_line=0 # обнуление счетчика поворотов
+flag_line=False # обнуление флага онаружающего линию поворота
 
-# global_speed = 0
+timer_turn_l=0 # обнуление таймераа поворота налево
+timer_turn_r=0 # обнуление таймера поворота направо
 
+timer_sec=None  # обнуление таймера секундомера
+secundomer=0  # обнуление переменной секундомера
 
-# state = "Main move"
-state = "Manual move"
-# state = "Main move"
-# state = "HSV"
+timer_banka=0 # обнуление таймера объезда дорожного знака
 
-pause_povorot = 0.7
+green=False # обнулене флага зеленого дорожого знака
+red=False # обнуение флага красного дорожного знака
 
-
-timer_finish = None
-############################################################
-
-# 1- по часовой, -1 против часовой стрелки
-speed_manual = 100
-direction = 0
-manual_angle = 0
-manual_throttle = 0
-#обнуление переменных
-
-# low_orange = np.array([0, 50, 80])
-# up_orange = np.array([50, 256, 256])
-#
-# # черный
-# low_black = np.array([0, 0, 0])
-# up_black = np.array([180, 256, 89])
-#
-# low_blue = np.array([90, 0, 0])
-# up_blue = np.array([120, 256, 170])
+speed_manual = 100 # задача значения переменной скорости ля ручного управления
+direction = None # обнуление значенияя переменной напавления движения
+manual_angle = 0 # обнуление переменной поворота сервомотора на ручном управлении
+manual_throttle = 0 # обнуление переменной движения ведущего мотора на ручнм управвлении
 
 class HSV_WORK(object):
+    # класс работы с цветами HSV
     """Work whith hsv colors"""
     colors = {}
 
     def reset(self):
-
+        # перезагрузка значений HSV
         print(self.colors)
         self.colors = {
             'orange': [[0, 50, 80], [50, 256, 256]],
-            # 'red_low': [[0, 0, 212], [31, 256, 256]],
-            #     # 'black_TL': [[0, 0, 0], [256, 256, 86]],
-            #     # 'red_STOP_low': [[0, 0, 66], [20, 256, 256]],
             'black': [[0, 0, 0], [180, 256, 89]],
             'green': [[51, 50, 70], [84, 256, 256]],
             'white': [[0, 0, 81], [255, 256, 254]],
             'blue': [[90, 0, 0], [120, 256, 170]],
-            #     # 'red_STOP_up': [[149, 0, 150], [256, 256, 256]],
             'red_up': [[96, 0, 0], [255, 256, 256]]
         }
 
         self.save_to_file()
 
     def __init__(self):
-
+        # инициаль=изация
         self.load_from_file()
         # self.reset()
 
     def get_color(self, name):
+        # функция получения маски цвета
         data = [[0, 0, 0], [256, 256, 256]]
         if isinstance(self.colors, dict):
             if name in self.colors:
@@ -110,6 +87,7 @@ class HSV_WORK(object):
         return data
 
     def constrain(self, x, out_min, out_max):
+        # функция установления минимального и максимального выходного значений
         if x < out_min:
             return out_min
         elif out_max < x:
@@ -118,22 +96,22 @@ class HSV_WORK(object):
             return x
 
     def set_color(self, name, data):
-
+        # установление цвета
         for i in range(len(data)):
             for j in range(len(data[i])):
                 data[i][j] = self.constrain(data[i][j], 0, 256)
         self.colors[name] = data
 
-    # def save_to_file(self, filename="/home/pi/robot/colors.txt"):
     def save_to_file(self, filename="colors.txt"):
+        # функция сохранения значений в файл
         print("save to file")
         with open(filename, 'w') as outfile:
             json.dump(self.colors, outfile)
         with open(filename + ".copy", 'w') as outfile:
             json.dump(self.colors, outfile)
 
-    # def load_from_file(self, filename="/home/pi/robot/colors.txt"):
     def load_from_file(self, filename="colors.txt"):
+        # функция загрузки данных из файла
         try:
             with open(filename) as json_file:
                 self.colors = json.load(json_file)
@@ -147,6 +125,7 @@ class HSV_WORK(object):
                 print("failed load copy", e1)
 
     def make_mask(self, frame, name):
+        # функция создания маски цвета
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         color = self.get_color(name)
         mask = cv2.inRange(hsv, np.array(color[0]), np.array(color[1]))
@@ -154,246 +133,204 @@ class HSV_WORK(object):
         return mask
 
     def list_names(self):
+        # функция вывода списка цветов
         names = []
         for i in self.colors:
             names.append(i)
         return names
-#класс фильтрации цветов
 
-hsv_work = HSV_WORK()
+hsv_work = HSV_WORK() # присвоение класса работы с HSV цветами
 
-# текущая стадия программы
+old_state = ""  # задача значений прошлой стадии программы
+fps=0 # обнуление счетчика fps
+fps_result=0 # переменная отображающая рузельтат подсчета fps
+fps_timer=0 # таймера для расчета fps
 
-old_state = ""
-# название стадий
-state_names = ["Manual move", "Move to line", "Main move", "Left", "Right"]
-#стадии алгоритма
-# фильтр черного цвета
+timer_state = 0 # таймера стадии робота
 
-# low = np.array([0, 0, 00])
-# up = np.array([180, 80, 115])
+def Find_black_line_left(frame_show, flag_draw=True):
+    # функция поиска черного бортика слева
 
-# синий
+    d=0
+    if direction==1:
+        d=30
 
+    x1, y1 = 0, 230-d
+    x2, y2 = 20, 380
 
-timer_state = 0
+    frame_crop_show = frame_show[y1:y2, x1:x2]# вырезаем часть изображение
 
+    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)# рисуем прямоугольник на изображении
+    mask = hsv_work.make_mask(frame_crop_show, "black") # применяем маску для проверки
+    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # на отфильтрованной маске выделяем контуры
 
-def Find_black_line(frame, frame_show, direction, flag_draw=True):
-    x1, y1 = 640 - 20, 0
-    x2, y2 = 640, 480
-
-    if direction == 1:
-        x1, y1 = 0, 0
-        x2, y2 = 20, 480
-
-    # вырезаем часть изображение
-    frame_crop = frame[y1:y2, x1:x2]
-    frame_crop_show = frame_show[y1:y2, x1:x2]
-    # cv2.imshow("frame_crop", frame_crop)
-    # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-    # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
-    # фильтруем по заданным параметрам
-    # mask = cv2.inRange(hsv, low_black, up_black)
-
-    mask = hsv_work.make_mask(frame_crop, "black")
-    # выводим маску для проверки
-    # cv2.imshow("mask", mask)
-    # на отфильтрованной маске выделяем контуры
-    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    # перебираем все найденные контуры
     flag_line = False
-    max_y = 0
-    for contour in contours:
-        # Создаем прямоугольник вокруг контура
-        x, y, w, h = cv2.boundingRect(contour)
-        # вычисляем площадь найденного контура
-        area = cv2.contourArea(contour)
-        if area > 20:
-            # отрисовываем найденный контур
-            if flag_draw:
-                cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
-            # включаем зеленый свет
-            # robot.lamp.rgb(0, 1, 0)
-            if max_y < y + h:
-                max_y = y + h
-    return max_y
-#функцияя поиска черного бортика поля
+    max_y_left = 0
+    for contour in contours: # перебираем все найденные контуры
 
-def Find_start_line(frame, frame_show, color, flag_draw=True):
-    x1, y1 = 320 - 20, 400
-    x2, y2 = 320 + 20, 440
-    # вырезаем часть изображение
-    frame_crop = frame[y1:y2, x1:x2]
-    frame_crop_show = frame_show[y1:y2, x1:x2]
-    # cv2.imshow("frame_crop", frame_crop)
-    # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    # переводим изображение с камеры в формат HSV
-    # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
-    # фильтруем по заданным параметрам
-    # mask = cv2.inRange(hsv, hsv_low, hsv_high)
-    mask = hsv_work.make_mask(frame_crop, color)
-    # выводим маску для проверки
-    # cv2.imshow("mask", mask)
-    # на отфильтрованной маске выделяем контуры
-    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    # перебираем все найденные контуры
-    for contour in contours:
-        # Создаем прямоугольник вокруг контура
-        x, y, w, h = cv2.boundingRect(contour)
-        # вычисляем площадь найденного контура
-        area = cv2.contourArea(contour)
-        if area > 350:
+        x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
+
+        area = cv2.contourArea(contour) # вычисляем площадь найденного контура
+        if area > 400:
+            if flag_draw: # отрисовываем найденный контур прямоугольником
+                cv2.rectangle(frame_crop_show, (x, y), (x+w, y+h), (0, 0, 255), 2)
+            if max_y_left < y + h:
+                max_y_left = y + h
+
+    cv2.putText(frame_show, "" + str(max_y_left), (0, 210), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (0, 255, 0), 2)
+    return max_y_left-d
+
+def Find_black_line_right(frame_show, flag_draw=True):
+    # функция поиска черного бортика справа
+
+    d=0
+    if direction==-1:
+       d=30
+
+    x1, y1 = 640 - 20, 230-d
+    x2, y2 = 640, 380
+
+
+    frame_crop_show = frame_show[y1:y2, x1:x2] # вырезаем часть изображение
+    mask = hsv_work.make_mask(frame_crop_show, "black") # применяем маску для проверки
+    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # на отфильтрованной маске выделяем контуры
+    flag_line = False
+    max_y_right = 0
+    for contour in contours: # перебираем все найденные контуры
+        x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
+        area = cv2.contourArea(contour) # вычисляем площадь найденного контура
+        if area > 400:
+            if flag_draw: # отрисовываем найденный контур
+                cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            if max_y_right < y + h:
+                max_y_right = y + h
+        cv2.putText(frame_show, "" + str(max_y_right), (600, 210), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                    (0, 255, 0), 2)
+    return max_y_right-d
+
+def Find_start_line(frame_show, color, flag_draw=True):
+    # функция поиска линии поворота
+
+    x1, y1 = 320 - 20, 440
+    x2, y2 = 320 + 20, 480
+
+    frame_crop = frame_show[y1:y2, x1:x2] # вырезаем часть изображение
+    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 255), 2) # рисуем прямоугольник на изображении
+    mask = hsv_work.make_mask(frame_crop, color) # применяем маску для проверки
+    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # на отфильтрованной маске выделяем контуры
+    for contour in contours: # перебираем все найденные контуры
+
+        x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
+
+        area = cv2.contourArea(contour) # вычисляем площадь найденного контура
+        if area > 200:
             if flag_draw:
-                cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
+                cv2.rectangle(frame_crop, (x, y), (x+w, y+h), (255, 0, 0), 2)
             return True
 
     return False
-#функция поиска стартовой линии
 
-def Find_box(frame, frame_show, color, flag_draw=True):
-    # x1, y1 = 0, 200  # Xanne
-    x1, y1 = 0, 200   #Lime
-    x2, y2 = 640, 460
-    # вырезаем часть изображение
-    frame_crop = frame[y1:y2, x1:x2]
-    frame_crop_show = frame_show[y1:y2, x1:x2]
-    # cv2.imshow("frame_crop", frame_crop)
-    # рисуем прямоугольник на изображении
+def Find_box(frame_show, flag_draw=True):
+    # фугкция поиска дорожных знаков
 
-    # переводим изображение с камеры в формат HSV
-    # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
-    # фильтруем по заданным параметрам
-    # mask = cv2.inRange(hsv, hsv_low, hsv_high)
-    mask = hsv_work.make_mask(frame_crop, color)
-    # robot.set_frame(mask)
-    # выводим маску для проверки
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    # cv2.imshow("mask", mask)
-    # на отфильтрованной маске выделяем контуры
-    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    # перебираем все найденные контуры
-    for contour in contours:
-        # Создаем прямоугольник вокруг контура
-        x, y, w, h = cv2.boundingRect(contour)
-        # вычисляем площадь найденного контура
-        area = cv2.contourArea(contour)
-        if area > 700:
+    x1, y1 = 60, 250
+    x2, y2 = 640-60, 400
+    frame_crop_show = frame_show[y1:y2, x1:x2] # вырезаем часть изображение
+    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2) # рисуем прямоугольник на изображении
+    frame_crop=cv2.GaussianBlur(frame_crop_show,(5,5),cv2.BORDER_DEFAULT) # делаем размытие по гауссу
+
+    color = "red_up"  # установление цвета знака который нужно найти
+    x_red_banka = None # обнуление х координаты красного знака
+    y_red_banka = None # обнуление у координаты красного знака
+    area_red_banka = None # обнуление площади красного знака
+
+    maskr = hsv_work.make_mask(frame_crop, color) # применяем маску для проверки
+    _, contours, hierarchy = cv2.findContours(maskr, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # на отфильтрованной маске выделяем контуры
+
+    for contour in contours: # перебираем все найденные контуры
+        x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
+        area = cv2.contourArea(contour) # вычисляем площадь найденного контура
+        if area > 900:
+            x_red_banka = x + w/2 # записываем х координату найденного контура
+            y_red_banka = y + h # записываем у найденного контура
+            area_red_banka = area # записываем площадь найденного контура
             if flag_draw:
                 c = (0, 0, 255)
                 if color == "green":
                     c = (0, 255, 0)
-                cv2.drawContours(frame_crop_show, contour, -1, c, 2)
+                cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), c, 2)
+                cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),
+                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,c, 2)
+                cv2.putText(frame_show, str(x + w / 2), (x + x1, y - 40 + y1),
+                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,(255,255,255), 2)
 
-                cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,c, 2)
-            return x + w / 2, area
+    color = "green"
+    x_green_banka = None # обнуление х координаты зеленого знака
+    y_green_banka = None # обнуление у координаты зеленого знака
+    area_green_banka = None # обнуление площади зеленого знака
+    maskg = hsv_work.make_mask(frame_crop_show, color) # применяем маску для проверки
+    _, contours, hierarchy = cv2.findContours(maskg, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE) # на отфильтрованной маске выделяем контуры
 
-    return None, None
-#функция поиска кубиков
-
-def Find_black_box_right(frame, frame_show, color, flag_draw=True):
-    x1, y1 = 360, 290
-    # x2, y2 = 430, 295
-    x2, y2 = 430, 480
-    # вырезаем часть изображение
-    frame_crop = frame[y1:y2, x1:x2]
-    frame_crop_show = frame_show[y1:y2, x1:x2]
-    # cv2.imshow("frame_crop", frame_crop)
-    # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    # переводим изображение с камеры в формат HSV
-    # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
-    # фильтруем по заданным параметрам
-    # mask = cv2.inRange(hsv, hsv_low, hsv_high)
-    mask = hsv_work.make_mask(frame_crop, color)
-    # выводим маску для проверки
-    # cv2.imshow("mask", mask)
-    # на отфильтрованной маске выделяем контуры
-    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    # перебираем все найденные контуры
-    for contour in contours:
-        # Создаем прямоугольник вокруг контура
-        x, y, w, h = cv2.boundingRect(contour)
-        # вычисляем площадь найденного контура
-        area = cv2.contourArea(contour)
-        if area > 2800:
+    for contour in contours: # перебираем все найденные контуры
+        x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
+        area = cv2.contourArea(contour) # вычисляем площадь найденного контура
+        if area > 900:
+            x_green_banka = x + w / 2 # записываем х координату найденного контура
+            y_green_banka = y + h # записываем у найденного контура
+            area_green_banka = area # записываем площадь найденного контура
             if flag_draw:
-                cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
-            return True
+                c = (0, 0, 255)
+                if color == "green":
+                    c = (0, 255, 0)
+                cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), c, 2)
+                cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),
+                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, c, 2)
+                cv2.putText(frame_show, str(x + w / 2), (x + x1, y - 40 + y1),
+                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 2)
 
-    return False
-#функция поиска черного бортипа перед роботом справа
+    return x_red_banka, y_red_banka, area_red_banka, x_green_banka, y_green_banka, area_green_banka  # возвращение значений
 
-def Find_black_box_left(frame, frame_show, color, flag_draw=True):
-    x1, y1 = 210, 290
-    # x2, y2 = 280, 295
-    x2, y2 = 280, 480
-    # вырезаем часть изображение
-    frame_crop = frame[y1:y2, x1:x2]
-    frame_crop_show = frame_show[y1:y2, x1:x2]
-    # cv2.imshow("frame_crop", frame_crop)
-    # рисуем прямоугольник на изображении
-    cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2)
-    # переводим изображение с камеры в формат HSV
-    # hsv = cv2.cvtColor(frame_crop, cv2.COLOR_BGR2HSV)
-    # фильтруем по заданным параметрам
-    # mask = cv2.inRange(hsv, hsv_low, hsv_high)
-    mask = hsv_work.make_mask(frame_crop, color)
-    # выводим маску для проверки
-    # cv2.imshow("mask", mask)
-    # на отфильтрованной маске выделяем контуры
-    _, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
-    # перебираем все найденные контуры
-    for contour in contours:
-        # Создаем прямоугольник вокруг контура
-        x, y, w, h = cv2.boundingRect(contour)
-        # вычисляем площадь найденного контура
-        area = cv2.contourArea(contour)
-        if area > 2800:
-            if flag_draw:
-                cv2.drawContours(frame_crop_show, contour, -1, (0, 0, 255), 2)
-            return True
 
-    return False
-#функция поиска черного бортипа перед роботом слева
+robot.wait(500) # задержка
+count_lines = 0  # обнудение псчетчика линий поворота
+flagfr = 0 # обнуление флага кадра с  робота
+index_color = 0 # обнуление индекса цвета для фильтра HSV
+step_hsv = 1 # задача изменение значение для фильтра HSV
+flag_not_save_hsv = 0 # обнуление переменной созранения значений HSV
 
-robot.wait(500)
-# frame1=None
-count_lines = 0
-e_old = 0
-flagfr = 0
-index_color = 0
-step_hsv = 1
-flag_not_save_hsv = 0
-#обнуление переменных
-hsv_frame = robot.get_frame(wait_new_frame=True)
-#установка изображения для работы класса НSV
+porog=0  # обнуление порога регулятора
+
+hsv_frame = robot.get_frame(wait_new_frame=True)  # ожидание нового кадра для фильтра HSV
+
 
 def put_telemetry(frame_show):
     # вывод телеметрии на экран
-    cv2.putText(frame_show, "State: " + state, (10, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                (0, 255, 255), 2)
-    cv2.putText(frame_show, "Count lines: " + str(count_lines), (10, 80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                (0, 255, 0), 2)
-    cv2.putText(frame_show, "Speed: " + str(global_speed), (10, 120), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                (255, 0, 255), 2)
+    cv2.putText(frame_show, "Count lines: " + str(count_lines), (10, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
+    cv2.putText(frame_show, "Speed: " + str(global_speed), (10, 40), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
+    cv2.putText(frame_show, "Serv: " + str(p), (10, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
+    cv2.putText(frame_show, "rt-lf=: " + str(delta_reg), (10,80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
+    cv2.putText(frame_show, "Time: " + str(secundomer), (500, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
+    cv2.putText(frame_show, "dir: " + str(direction), (200, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                (255, 255, 255), 2)
+    robot.set_frame(frame_show, 40)
 
-    robot.set_frame(frame_show, 15)
-#функция вывода надписей на экран
+robot.serv(-35) # установление сервомотора на -35 градусов
+robot.serv(0) # выравнивание срвомотора на 0 градусов
+robot.sound1() # звук загрузки программы робота
 
-reg_move = regulators.Regulators(0, 0, 0, Ki_border=5)
-robot.serv(-35)
-robot.serv(0)
-robot.sound1()
-#установка значений для регулятора
+reg_move.set(0.3, 0, 0.1) # установление коэффициентов регулятора пд
 
 def go_back(angle, time1, time2):
+    # функция отъезда назад
     global timer_finish
     robot.serv(angle)
-    robot.move(-global_speed-40, 0, time1, wait=False)
+    robot.move(-global_speed, 0, time1, wait=False)
     robot.wait(time1)
 
     robot.serv(-angle)
@@ -401,325 +338,201 @@ def go_back(angle, time1, time2):
     robot.wait(time2)
     if timer_finish is not None:
         timer_finish += time1 / 1000 + time2 / 1000
-#функция движения назад для объезда препядствий
-
 
 while True:
-    if robot.button()==1:
-        state = "Move to line"
+    if robot.button()==1: # ожидание нажатия кнопки старта робота
+        state = "Main move" # установление стадии программы
     if state != old_state:
         timer_state = time.time()
         old_state = state
 
-    frame = robot.get_frame(wait_new_frame=True)
-    # получение с камеры робота изображение
-    frame_show = frame.copy()
-    # копирование получаемого  камеры изображения
-    k = robot.get_key()
-    # print(k)
+    frame_show = robot.get_frame(wait_new_frame=1) # получение изображения с робота
 
-    # если нажата клавиша 1
-    if k == 48:
-        # переключаем програму в 1 стадию
-        state = "HSV"
-    if k == 49:
-        # переключаем програму в 1 стадию
-        state = "Manual move"
-    # если нажата клавиша 2
-    elif k == 50:
-        # переключаем програму во 2 стадию
-        state = "Move to line"
-    elif k == 51:
-        # переключаем програму во 2 стадию
-        state = "Main move"
-        robot.serv(0)
-    # elif k == 51:
-    #     # переключаем програму в 3 стадию
-    #     timer_stop = time.time()
-    if k==187:
-        global_speed+=1
-    elif k==189:
-        global_speed-=1
-    if k==66:
-        robot.tone(3100,300)
-    #определенные действия при наатии определенных кнопок
-    if state == "Manual move":
-        # ручное управление
+    if state == "Main move":
+        # стадия самостоятельного движения
+        if timer_sec==None: # начало отсчета секундомера
+            timer_sec=time.time()
+        secundomer=time.time()-timer_sec
 
-        if k == 37:
-            manual_serv = 25
-            robot.serv(manual_serv)
-            print(manual_serv)
-        if k == 39:
-            manual_serv = -25
-            robot.serv(manual_serv)
-            print(manual_serv)
-        if k == 32:
-            manual_serv = 0
-            robot.serv(manual_serv)
-            print(manual_serv)
-        if k == 38:
-            robot.move(speed_manual, 0, 100, wait=False)
-        if k == 40:
-            robot.move(-speed_manual, 0, 100, wait=False)
-        #ручное управление кнопкамии на клавиатуре компьютера
-        Find_box(frame, frame_show, "green")
-        Find_black_box_right(frame, frame_show, "black")
-        Find_black_box_left(frame, frame_show, "black")
-        cv2.putText(frame_show, "throttle: " + str(round(manual_throttle, 1)), (10, 60),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        cv2.putText(frame_show, "angle: " + str(round(manual_angle, 1)), (10, 80),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        #вывод телеметрии
-        put_telemetry(frame_show)
-        # вывод телеметрии
-    elif state == "Move to line":
-        # стадия движения до линии
-        robot.serv(0)
-        robot.move(global_speed, 0, 100, wait=False)
-        # выставлении сервомотора ровно
-        is_orange = Find_start_line(frame, frame_show, "orange")
-        is_blue = Find_start_line(frame, frame_show, "blue")
-        #поиск оранжевой и синей линий
-        # print("orange:",is_orange, "Blue:", is_blue)
+        is_orange = Find_start_line(frame_show, "orange") # поиск орнжевой линии поворота
+        is_blue = Find_start_line(frame_show, "blue") # поиск синей линии поворота
 
-        if is_orange:
-            direction = 1
-            state = "Right"
-            print("End state Move to line, go ", state)
-        #поиск оранжевого
-        if is_blue:
-            direction = -1
-            state = "Left"
-            # frame1 = frame
-            print("End state Move to line, go ", state)
-         # поиск оранжевого
-        #результат вычислений
-        put_telemetry(frame_show)
-        #вывод телеметрии
-    elif state == "Left":
-        #стади повората влево
-        cv2.putText(frame_show, "timer: " + str(round(time.time() - timer_state, 1)), (10, 60),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        #вывод телеметрии
-        if time.time() < timer_state + pause_povorot:
-            robot.move(global_speed, 0, 100, wait=False)
-            robot.serv(30)
-        # едем прямо, а потом переключаемся в 1 стадию
-        if time.time() > timer_state + pause_povorot:
-            state = "Main move"
-        # таймер поворота
-        is_orange = Find_start_line(frame, frame_show, "orange")
-        #поис оранжевой линии
-        if is_orange:
-            state = "Main move"
-        # при её обнаружении переключаемся в стадию движения
-        put_telemetry(frame_show)
-        #вывод телеметрии
-    elif state == "Right":
-        cv2.putText(frame_show, "timer: " + str(round(time.time() - timer_state, 1)), (10, 60),
-                    cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        #вывод телеметрии
-        if time.time() < timer_state + pause_povorot:
-            robot.move(global_speed, 0, 100, wait=False)
-            robot.serv(-30)
-        # едем прямо, а потом переключаемся в 1 стадию
-        if time.time() > timer_state + pause_povorot:
-            state = "Main move"
-        # таймер поворота
-        put_telemetry(frame_show)
-        # вывод телеметрии
-    elif state == "Main move":
-        #стадия движения
-        if count_lines >= 11:
-            if timer_finish is None:
-                timer_finish = time.time() + pause_finish
-        #счетчик пворотов, при прозождении 12 поворотов робот засекает таймер финиша
+        if direction==None: # если направление роботу еще не известно
+            if is_orange: # если робот нашел оранжевую линию
+                direction = 1 # значит направление по часовой стрелке
+                porog=0 # порог равен 0
+            if is_blue: # если робот нашел синюю линиб поворота
+                direction = -1 # значит направление против часовой стрелки
+                porog=30 # порог равен 30
+
+        else: # если робот знает направление движения
+            if direction==1 and is_orange: # если направление движения по часовой стрелке и он увидел орандевую линию
+                flag_line=True # флаг линии равен истина
+                timer_line=time.time() # засекается таймер линии
+            if direction==-1 and is_blue: # если направление движения против часовой стрелке и он увидел синию линию
+                flag_line=True # флаг линии равен истина
+                timer_line=time.time() # засекается таймер линии
+
+            if time.time()>=timer_line+0.1 and flag_line: # если прошла 0.1 секунда и робот до этого видел линию
+                flag_line=False # флаг линии становится ложь
+                count_lines+=1 # счетчик линий становтся на 1 больше
+
+        if count_lines >= 12: # елси робот проехал 12 поворотов=3круга
+            if timer_finish is None: # если таймер финиша еще не засечен
+                timer_finish = time.time() + pause_finish # засекаем таймер финиша с учетом паузы виниша
+
+            else: # если таймер финиша уже засечен
+                if time.time() >= timer_finish: # если таймер финиша вышел
+                    global_speed_old = global_speed # запоминаем текущую скорость
+                    global_speed = -2 # скорость устанавливаем -2
+                    robot.serv(0) # выравниваем сервомотор
+                    robot.move(-5,0,2,wait=True) # робот тормозит
+                    robot.beep() # робот издает сигнал о финишировании
+                    state = "Finish" # стадия финиша
+
+        delta_banka = 0 # обнуление значения обруливания дорожного знака
+        delta_red = 0 # обнуление переменной обруливания красного знака
+        delta_green = 0 # обнуление переменной обруливания зеленого знака
+
+
+        x_red_banka, y_red_banka, area_red_banka, x_green_banka, y_green_banka, area_green_banka= Find_box(frame_show) # получение данных о дорожных знаках
+        if area_red_banka is not None: # если робот обнаружил красный знак
+            red=True # флаг красного знака - истина
+
+            if x_red_banka>275: # если х координата красного знака больше 275
+                delta_red=40 # бруливание красного знака = 40
+            elif x_red_banka<120: # если х координата красного знака меньше 120
+                delta_red = 0 # обруливание красного знака = 0
             else:
-                if time.time() > timer_finish:
-                    global_speed = 0
-                    robot.beep()
-                    state = "Finish"
-                    #переход в стадию финиша
-        delta_banka = 0
-        delta_speed = 0
-        #обнуление переменных
-        if direction == 1:
-        # если напрвление двиения по часовой стрелке
-            if Find_black_box_left(frame, frame_show, "black"):
-                go_back(40, 250, 100)
-            #робот остерегается черного бортика слева
-            is_orange = Find_start_line(frame, frame_show, "orange")
-            if is_orange:
-                state = "Right"
-                count_lines += 1
-            #если робот замечает оранжевую линию он прибавляет к счетчику поворотов 1 и переключается в стадию поворота направо
-            if not flag_qualification:
-                cord_red_banka, area_red_banka = Find_box(frame, frame_show, "red_up")
-                # если робот едет основное задание он ищет красные банки и записыват их положение и площадь  в пикселях
-                if area_red_banka is not None:
-                    delta_banka = delta_red_plus
-                    if area_red_banka > 13500:
-                        go_back(40, time_go_back_banka, 120)
-                #если банка слишком близко к роботу - он включает защиту и оъезжает он нее назад
-
-                cord_green_banka, area_green_banka = Find_box(frame, frame_show, "green")
-                # если робот едет основное задание он ищет зеленые банки и записыват их положение и площадь  в пикселях
-                if area_green_banka is not None:
-                    delta_banka = delta_green_plus
-                    # print(area_green_banka)
-                    if area_green_banka > 13500:
-                        go_back(-40, time_go_back_banka, 120)
-                #если банка слишком близко к роботу - он включает защиту и оъезжает он нее назад
-
-                if area_green_banka is not None and area_red_banka is not None:
-
-                    if area_red_banka > area_green_banka:
-                        delta_banka = delta_red_plus
-                    else:
-                        delta_banka = delta_green_plus
-                # если робот обнаружил сразу 2 банки - он определяет какакя из них больше и ставит её в рпиоретет
-
-        if direction == -1:
-        # если напрвление двиения против часовой стрелки
-            if Find_black_box_right(frame, frame_show, "black"):
-                go_back(-40, 250, 100)
-            # робот остерегается черного бортика справа
-            is_blue = Find_start_line(frame, frame_show, "blue")
-            if is_blue:
-                state = "Left"
-                count_lines += 1
-            # если робот замечает оранжевую синию он прибавляет к счетчику поворотов 1 и переключается в стадию поворота налево
-            if not flag_qualification:
-                cord_red_banka, area_red_banka = Find_box(frame, frame_show, "red_up")
-                # если робот едет основное задание он ищет зеленые банки и записыват их положение и площадь  в пикселях
-                if area_red_banka is not None:
-                    delta_banka = delta_red_minus
-                    if area_red_banka > 12700:
-                        go_back(40, time_go_back_banka, 120)
-                # если банка слишком близко к роботу - он включает защиту и оъезжает он нее назад
-                cord_green_banka, area_green_banka = Find_box(frame, frame_show, "green")
-                # если робот едет основное задание он ищет красные банки и записыват их положение и площадь  в пикселях
-                if area_green_banka is not None:
-                    delta_banka = delta_green_minus
-                    # print(area_green_banka)
-                    if area_green_banka > 12700:
-                        go_back(-40, time_go_back_banka, 120)
-                # если банка слишком близко к роботу - он включает защиту и оъезжает он нее назад
-                if area_green_banka is not None and area_red_banka is not None:
-
-                    # delta_speed = -10
-
-                    if area_red_banka > area_green_banka:
-                        delta_banka = delta_red_minus
-                    else:
-                        delta_banka = delta_green_minus
-                # если робот обнаружил сразу 2 банки - он определяет какакя из них больше и ставит её в рпиоретет
-
-        max_y = Find_black_line(frame, frame_show, direction)
-        # робот определяет высоту от нижнего края экрана до нижней точки видимого контура в границах в зависимоссти от направления
-        if max_y > 0:
-            reg_move.set(0.4, 0.00001, 0.08)
-            # если высота положительна то робот едет по pid регулятору
-            porog = porog_black_line_minus
-            if direction > 0:
-                porog = porog_black_line_plus
-            # робот выберает порог в зависимости от направления движения
-
-            p = reg_move.apply(porog, max_y) * direction
-            robot.serv(p + delta_banka)
-            # робот вычесляет необ ходимый поворот и отправляет на сервопривод
-            robot.move(global_speed + delta_speed, 0, 100, wait=False)
-            # включение двигателя на определенную скорость
-        else:
-            if direction == -1:
-                go_back(50, 370, 200)
+                delta_red=40-(275-x_red_banka)/3.3  # иначе обруливание от красного знака расчитывается по формуле
+            if direction==1: # если направление по часовой стрелке
+                delta_banka = delta_red+y_red_banka/6 # к обруливанию дорожного знака прибавляется поворот от красного знака по формуле от у координаты красного знака
             else:
-                go_back(-50, 370, 200)
-            # в зависимости от направления робот отъезжает назад чтобы не было столкновения с бортиком
-        put_telemetry(frame_show)
-        # вывод телеметрии
-    elif state == 'HSV':
-        # настройка фильтра HSV
-        if flagfr == 0:
-            hsv_frame = frame
-        Y, X, Z = frame.shape
-        lst = hsv_work.list_names()
-        name_color = lst[index_color]
-        mask = hsv_work.make_mask(hsv_frame, name_color)
-        color = hsv_work.colors[name_color]
-        low_set, up_set = color[0], color[1]
-        # создание маски для работы фиильтра HSV
-        gray_image = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        cv2.putText(gray_image, str(name_color), (10, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        cv2.putText(gray_image, str(color[0]), (10, 40), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        cv2.putText(gray_image, str(color[1]), (10, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        cv2.putText(gray_image, "step: " + str(step_hsv), (10, 80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
-                    (0, 0, 255), 2)
-        # вывод телеметрии
-        if flag_not_save_hsv:
-            pass
-
-        robot.set_frame(gray_image)
-        # cv2.imshow("hsv", gray_image)
-        m = k
-        if m == 32: flagfr = not flagfr
-
-        if m == 81: low_set[0] -= step_hsv
-        if m == 87: low_set[0] += step_hsv
-        if m == 69: up_set[0] -= step_hsv
-        if m == 82: up_set[0] += step_hsv
-        if m == 65: low_set[1] -= step_hsv
-        if m == 83: low_set[1] += step_hsv
-        if m == 68: up_set[1] -= step_hsv
-        if m == 70: up_set[1] += step_hsv
-        if m == 90: low_set[2] -= step_hsv
-        if m == 88: low_set[2] += step_hsv
-        if m == 67: up_set[2] -= step_hsv
-        if m == 86: up_set[2] += step_hsv
-
-        if m >= 65 and m <= 90:
-            flag_not_save_hsv = True
-        # управление настройками фильтра клавиаатуррой компьютера
-        hsv_work.set_color(name_color, [low_set, up_set])
-        if m == 8:
-            if step_hsv == 1:
-                step_hsv = 10
+                delta_banka = delta_red + y_red_banka /2 # к обруливанию дорожного знака прибавляется меньший поворот от красноо знака по формуле от у координаты красного знака
+            if delta_banka > 60: # если обруливание знака больше 60
+                delta_banka = 60 # обруливание знака = 60
+            delta_banka=delta_banka*-1 # значение обруливание знака умножается на -1
+        if area_green_banka is not None: # если робот обнаружил зеленый знак
+            green=True # флаг зеленого знака - истина
+            if x_green_banka<275: # если х координата зеленого знака меньше 275
+                delta_green=40 # бруливание зеленого знака = 40
+            elif x_green_banka>370: # если х координата зеленого знака больше 370
+                delta_green = 0 # обруливание зеленого знака = 0
             else:
-                step_hsv = 1
-        if m == 13:
-            hsv_work.save_to_file()
-            flag_not_save_hsv = False
-        # сохранение значчений фильтра для дальнейшей работы
-        if m == 40:  # вниз
-            index_color += 1
-            lst = hsv_work.list_names()
-            if index_color >= len(lst):
-                index_color = 0
-            robot.wait(200)
-            robot.get_key()
-        # перелистывание списка настройки цветов вниз
-        if m == 38:  # вверх
-            index_color -= 1
-            lst = hsv_work.list_names()
-            if index_color < 0:
-                index_color = len(lst) - 1
-            robot.wait(200)
-            robot.get_key()
-        # перелистывание списка настройки цветов вверх
-        name_color = lst[index_color]
-        color = hsv_work.colors[name_color]
-        low_set, up_set = color[0], color[1]
+                delta_green=40-(x_green_banka-275)/3.3  # иначе обруливание от зеленого знака расчитывается по формуле
+            if direction==-1: # если направление против часовой стрелки
+                delta_banka = delta_green+y_green_banka/6 # к обруливанию дорожного знака прибавляется поворот от зеленого знака по формуле от у координаты зеленого знака
+            else:
+                delta_banka = delta_green + y_green_banka /2 # к обруливанию дорожного знака прибавляется меньший поворот от зеленого знака по формуле от у координаты зеленого знака
+            if delta_banka > 60: # если обруливание знака больше 60
+                delta_banka = 60 # обруливание знака = 60
 
-        if m != -1:
-            print(name_color, low_set, up_set)
-            print(m)
-            # вывод полученных значений
-        pass
+        if area_green_banka is not None and area_red_banka is not None: # если робот нашел и зеленый и красный дорожный знаки
+            if area_red_banka > area_green_banka: # если площадь в пикселях красного знака больше площади зеленого знака
+                delta_banka = delta_red # обруливание от знака равно обруливанию красного знака
+                green=False # флаг зеленого знака равен ложь
+            else: # иначе
+                delta_banka = delta_green # обруливание от знака равно обруливанию зеленого знака
+                red=False # флаг крсного знака равен ложь
+
+        # вывод на экран значения отруливания от дорожного знака
+        cv2.putText(frame_show, "banka: " + str(delta_banka), (10, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                    (255, 255, 255), 2)
+
+        max_y_left = Find_black_line_left(frame_show) # поиск левого черного бортика поля
+        max_y_right = Find_black_line_right(frame_show) # поиск правого черного бортика поля
+
+        if max_y_right>0 and max_y_left>0: # если оба датчика не видят бортик
+            green=False # флаг зелегоно знака равен ложь
+            red=False # флаг красного знака равен ложь
+
+        delta_reg = max_y_right - max_y_left + porog  # расчитывание разницы показаний датчиков и суммы отдаления от центра
+        p = int(delta_reg * 0.5 + (delta_reg - delta_reg_old) * 0.2) # расчитывание ошибки
+        delta_reg_old = delta_reg # присваивание переменной значения ошибки
+
+
+        if (max_y_right == 0 or flag_doezd_r) and not flag_doezd_l: # если правый датчик не видит линию или флаг доезда направо истина и при этом флаг доезда налево ложь
+            if time.time()<=timer_turn_r+0.8:  # если таймер поворота направо на 0.8 секунд не истек
+                p=-20 # ошибка равна -20
+            else: # иначе
+                p=-55 # ошибка равна -55
+            if povorot: # если флаг экстренного поворота истина
+                p=-55 # ошибка равна -55
+
+            if direction==1 and green: # если напрвление по часовой стрелке и флаг зеленого истина
+                p=-55 # ошибка равна -55
+            flag_doezd_r=True # флаг доезд направо истина
+
+            if direction==1: # если направление по часовой стрелке
+                if max_y_right > 40 and time.time()>timer_turn_r+0.4: # если показание правого датчика больше 40 и таймер поворота направо на 0.4 секуны истек
+                    flag_doezd_r = False # флаг доезд направго ложь
+                    povorot = False # флаг экстренного поворота ложь
+            else: # иначе
+                if max_y_right > 40: # если показание правого датчика больше 40
+                    flag_doezd_r = False # флаг доезда направо ложь
+                    povorot = False # флаг экстренного поворота ложь
+            if direction == -1 and max_y_left == 0: # если направление против часовой стрелки и показание левого датчика = 0
+                flag_doezd_r=False # флаг доезда направо ложь
+                flag_doezd_l=True # флаг доезда налево истина
+                povorot=True # флаг экстренного поворота истина
+        else: # иначе
+            timer_turn_r=time.time()  # обновляем таймер поворота направо
+
+        if (max_y_left==0 or flag_doezd_l) and not flag_doezd_r: # если левый датчик не видит линию или флаг доезда налево истина и при этом флаг доезда направо ложь
+            if time.time()<=timer_turn_l+0.8:  # если таймер поворота налево на 0.8 секунд не истек
+                p=25 # ошибка равна 25
+            else: # иначе
+                p=55 # ошибка равна 55
+            if povorot: # если флаг экстренного поворота истина
+                p=55 # ошибка равна 55
+            if direction==-1 and red: # если напрвление против часовой стрелки и флаг красного истина
+                p=55 # ошибка равна 55
+            flag_doezd_l = True # флаг доезд налево истина
+
+            if direction==-1: # если направление против часовой стрелки
+                if max_y_left > 40 and time.time()>timer_turn_l+0.4: # если показание левого датчика больше 40 и таймер поворота налево на 0.4 секуны истек
+                    flag_doezd_l = False # флаг доезд налево ложь
+                    povorot = False # флаг экстренного поворота ложь
+            else: # иначе
+                if max_y_left > 40: # если показание левого датчика больше 40
+                    flag_doezd_l = False # флаг доезда налево ложь
+                    povorot = False # флаг экстренного поворота ложь
+            if direction == 1 and max_y_right == 0: # если направление по часовой стрелке и показание правого датчика = 0
+                flag_doezd_l=False # флаг доезда налево ложь
+                flag_doezd_r=True # флаг доезда направо истина
+                povorot=True # флаг экстренного поворота истина
+        else: # иначе
+            timer_turn_l=time.time()  # обновляем таймер поворота налево
+
+        if p > 55: # если ошибка больше 55
+            p = 55 # ошибка равна 55
+        if p < -55: # если ошибка меньше -55
+            p = -55 # ошибка равна -55
+
+        if -2 < p < 2: # если ошибка больше -2 и меньше 2
+            p = 0 # ошибка равна 0
+
+        if delta_banka!=0: # если обруливание знака не равно 0
+            # если направление против часовой стрелки и флаг доезда налево истина и обруливание больше 0
+            # или направление по часовой стрелки и флаг доезда направо истина и обруливание знака меньше 0
+            if (direction==-1 and flag_doezd_l and delta_banka>0) or (direction==1 and flag_doezd_r and delta_banka<0):
+                robot.serv(p) # поворачиваем сервомотор на ошибку
+            else: # иначе
+                robot.serv(delta_banka) # поворачиваем сервомотор на обруливание знака
+        else: # иначе
+             robot.serv(p) # поворачиваем сервомотор на ошибку
+
+        robot.move(global_speed,0 , 100, wait=False) # включаем ведущий мотор с глобальной скоростью на 100 мс без задержки
+
+        fps += 1 # прибавляем к счетчику fpa 1
+
+        # выводим на экран текст с результатом подсчета fps
+        cv2.putText(frame_show, "fps: " + str(fps_result), (520, 440), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,
+                    (255, 255, 255), 2)
+
+        if time.time() > fps_timer + 1: # если таймер на 1 секунду истек
+            fps_result = fps # результат подсчета приравнивается к счетчику fps
+            fps_timer = time.time() # обновление fps таймера
+            fps = 0 # обнуление счетчика fps
+
+        put_telemetry(frame_show) # вывод телеметрии
