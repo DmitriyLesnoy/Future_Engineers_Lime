@@ -163,7 +163,7 @@ n) To start starting the program on the robot, press the Start button
 o) To stop the program on the robot, press the Stop button
 ![image](https://user-images.githubusercontent.com/64408062/130712168-a8edb3db-d2c4-4bbe-83d8-ceb0b76dac9e.png)
 
-p) To restart the program on the robot, click on the Raw button
+p) To get information of , click on the Raw button
 ![image](https://user-images.githubusercontent.com/64408062/130712175-67f0627e-0cf8-4469-b2ea-83fa13a14708.png)
 
 q) To enable video broadcast from the robot, click the Video button
