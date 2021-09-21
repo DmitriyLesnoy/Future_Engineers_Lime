@@ -120,15 +120,20 @@ c) Click on the Download Bitvise SSH Client button![image](https://user-images.g
 d) Click on the Download Bitvise SSH Client button![image](https://user-images.githubusercontent.com/64408062/134121837-889cdd95-da75-49eb-b9ec-2d57f3d31c64.png)
 
 e) Then the download of the installation file will start.
+
 f) When the download is finished open the installation file and finish installing the program.  
 
 
 Starting the robot:
 
 a) Insert the 3.7 Volt accumulators 18650 into the battery compartment of the robot. Do not confuse + and - batteries to avoid consequences.
+
 b) Press the red power button on the robot.
+
 c) When you turn on the PyBoard microcontroller, a sound with an increase in tone will sound, wait until the Raspberry Pi microcomputer starts up, after it finishes starting it will play a melody - a double trill.
+
 Uploading the project to the robot:
+
 a) Open PyCharm, click on the File button in the upper left corner.
 ![image](https://user-images.githubusercontent.com/64408062/130712044-5ea0ebe5-6276-4208-be29-139d3f6cd5a3.png)
 
@@ -142,7 +147,7 @@ d) By default, the folder should be in this path, you can copy and paste into th
 ![image](https://user-images.githubusercontent.com/64408062/130712067-68f6a56a-7542-4cd6-9a80-ab40017d7047.png)
 
 e) You should open the project folder
-![image](https://user-images.githubusercontent.com/64408062/130712087-af4306a5-1003-45d9-932b-2af75b251c71.png)
+![image](https://user-images.githubusercontent.com/64408062/134128473-15581f11-78e8-4f46-b510-88171a9d424c.png)
 
 f) Connect Raspberry Pi and computer with an Ethernet cable
  
