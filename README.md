@@ -144,49 +144,42 @@ d) By default, the folder should be in this path, you can copy and paste into th
 e) You should open the project folder
 ![image](https://user-images.githubusercontent.com/64408062/130712087-af4306a5-1003-45d9-932b-2af75b251c71.png)
 
-f) To upload files to the Raspberry Pi, you need to open the Windows network menu in the bottom right corner
-![image](https://user-images.githubusercontent.com/64408062/130712093-5f4a6bd5-bd97-4140-808f-b853595bd762.png)
+f) Connect Raspberry Pi and computer with an Ethernet cable
  
-g) Select Lime network
-![image](https://user-images.githubusercontent.com/64408062/130712103-b2d6f460-d7ce-4778-bd87-20029b2cac8b.png)
- 
-h) Then enter the password and connect to the network
-![image](https://user-images.githubusercontent.com/64408062/130712106-20039819-0590-4ad2-8c0b-9cb786571605.png)
- 
-i) Now go back to the PyCharm program, in the project files menu, select and open the Start Robot program
+g) Now go back to the PyCharm program, in the project files menu, select and open the Start Robot program
 ![image](https://user-images.githubusercontent.com/64408062/130712115-b267764d-245f-4b7f-857c-4658daf6621f.png)
  
-j) In the right-hand buttons at the top of the screen, click the Run button
+h) In the right-hand buttons at the top of the screen, click the Run button
 ![image](https://user-images.githubusercontent.com/64408062/130712126-b69ae1cb-c19c-41aa-8f45-cc1b890994cb.png)
 
-k) Select the Run button, in the small window that opens, select the Start robot program
+i) Select the Run button, in the small window that opens, select the Start robot program
 ![image](https://user-images.githubusercontent.com/64408062/130712135-a9f7d0f5-020c-45c7-99df-8c2fbede583f.png)
  
-l) This window will open
+j) This window will open
 ![image](https://user-images.githubusercontent.com/64408062/130712143-b8af7443-2363-450c-a6aa-446a76d1ff79.png)
 
-m) To load the program on the robot, click on the Load Start button and select the program to start
+k) To load the program on the robot, click on the Load Start button and select the program to start
 ![image](https://user-images.githubusercontent.com/64408062/130712150-02a863d8-850f-455f-b355-e93e2cb9b61b.png)
  
-n) To start starting the program on the robot, press the Start button
+l) To start starting the program on the robot, press the Start button
 ![image](https://user-images.githubusercontent.com/64408062/130712160-2179b031-af54-4d44-97ce-7605fc01ea9c.png)
 
-o) To stop the program on the robot, press the Stop button
+m) To stop the program on the robot, press the Stop button
 ![image](https://user-images.githubusercontent.com/64408062/130712168-a8edb3db-d2c4-4bbe-83d8-ceb0b76dac9e.png)
 
-p) To get information of , click on the Raw button
+n) To get information of , click on the Raw button
 ![image](https://user-images.githubusercontent.com/64408062/130712175-67f0627e-0cf8-4469-b2ea-83fa13a14708.png)
 
-q) To enable video broadcast from the robot, click the Video button
+o) To enable video broadcast from the robot, click the Video button
 ![image](https://user-images.githubusercontent.com/64408062/130712183-fc1096d7-6929-402b-9db0-e04596887cea.png)
 
-r) But before using all these buttons, you need to connect to the robot using the Connect to robot button.
+p) But before using all these buttons, you need to connect to the robot using the Connect to robot button.
 ![image](https://user-images.githubusercontent.com/64408062/130712198-c6ae6424-90f0-4f3b-b113-6f83600f4b86.png)
  
-s) Clicking on the button will open a list of robots available to you, select the first option
+q) Clicking on the button will open a list of robots available to you, select the first option
 ![image](https://user-images.githubusercontent.com/64408062/130712211-3627f600-62b9-429f-9bb0-4e4da3b389f9.png)
   
-t) When the robot and computer are connected to each other, there will be an inscription:
+r) When the robot and computer are connected to each other, there will be an inscription:
 ![image](https://user-images.githubusercontent.com/64408062/130712231-f481638b-ce72-46cb-bffb-f21d47d068cd.png)
 
 Ways to connect to individual components and share files: 
