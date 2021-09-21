@@ -11,7 +11,7 @@ electronics engineer, Glamozdin Yuri - our mentor and trainer.
                   
 The robot was programmed in Python version 3.9.3. The interpreter was PyCharm.
                                                                                                                 
-To connect the robot and the computer, the robot creates a wi-fi access point or take Ethernet cable to which the computer is connected. Next, using the StartRobot application and the cv2 library, we load the program file onto the Raspberry microcomputer. He saves it to the SD card and then executes the code.
+To connect the robot and the computer, take Ethernet cable to which the computer is connected. Next, using the StartRobot application, we load the program file onto the Raspberry microcomputer. He saves it to the SD card and then executes the code.
                                                                                                                                                  
 As the code is executed, the Raspberry microcomputer continuously sends data packets to PyBoard with its unique number. The PyBoard microcontroller checks that the packet matches this number, in case of a packet malfunction, rejects it. Then the microcontroller already sends commands to the motor and servo
 
