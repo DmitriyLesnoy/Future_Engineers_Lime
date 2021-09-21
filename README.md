@@ -111,6 +111,18 @@ c) The download of the project archive should start
 d) Then unzip the file to a regular folder
 ![image](https://user-images.githubusercontent.com/64408062/130711920-75e5f5cc-c9a7-4fbc-87e3-0bccbd82862f.png)
 
+4) Installing Bitvise SSH Client:
+a) Go to the official website of the program:![image](https://user-images.githubusercontent.com/64408062/134121813-e6b47f4c-e2d8-4a4e-a426-65c70268e1ca.png)
+
+b) Click on the download button![image](https://user-images.githubusercontent.com/64408062/134121821-8c0e108c-720e-46a4-820f-70513c89bafa.png)
+
+c) Click on the Download Bitvise SSH Client button![image](https://user-images.githubusercontent.com/64408062/134121827-dc956df4-5f0d-4971-bd74-36f514561a46.png)
+
+d) Click on the Download Bitvise SSH Client button![image](https://user-images.githubusercontent.com/64408062/134121837-889cdd95-da75-49eb-b9ec-2d57f3d31c64.png)
+
+e) Then the download of the installation file will start.
+f) When the download is finished open the installation file and finish installing the program.  
+
 
 Starting the robot:
 
