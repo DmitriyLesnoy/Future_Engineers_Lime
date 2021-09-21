@@ -189,7 +189,9 @@ s) Clicking on the button will open a list of robots available to you, select th
 t) When the robot and computer are connected to each other, there will be an inscription:
 ![image](https://user-images.githubusercontent.com/64408062/130712231-f481638b-ce72-46cb-bffb-f21d47d068cd.png)
 
-Ways to connect to individual components:
-a) To connect directly to the Raspberry Pi, you need to remove the Micro SD, then connect it to the computer, or use a USB cable, micro USB to plug it into the microcomputer and then into the computer.
+Ways to connect to individual components and share files: 
+Raspberry Pi:
+  To connect to a Raspberry Pi microcomputer, you need to connect it to a monitor via an HDMI cable to display an image, and connect it to a computer via an Ethernet cable. Then, through the command line using the Ifconfig command, we get the Raspberry Pi address data. Find the Ethernet IP address. Enter the address, password, port and username into the Bitvise SSH Client program. This way we can exchange files with the Raspberry Pi. 
 
-b) To connect directly to PyBoard, you need to connect the Micro USB cable to the microcontroller connector and to the computer. 
+PyBoard:
+  To upload or download files to the PyBoard microcontroller, you need to connect it to the computer using the Micro - USB cable. Then you can share files. 
