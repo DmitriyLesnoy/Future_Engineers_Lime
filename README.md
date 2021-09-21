@@ -106,7 +106,7 @@ b) Then click on the green Code button, then download the zip archive
 ![image](https://user-images.githubusercontent.com/64408062/130711889-7760187f-8e9c-4201-8ae7-df344aa634f7.png)
 
 c) The download of the project archive should start
-![image](https://user-images.githubusercontent.com/64408062/130711902-bbe2a6b4-dd43-4564-84f8-512b6933b523.png)
+![image](https://user-images.githubusercontent.com/64408062/134119396-545e05f7-883c-4ea4-a549-2faed9434958.png)
 
 d) Then unzip the file to a regular folder
 ![image](https://user-images.githubusercontent.com/64408062/130711920-75e5f5cc-c9a7-4fbc-87e3-0bccbd82862f.png)
