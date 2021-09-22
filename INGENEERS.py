@@ -240,6 +240,7 @@ def Find_box(frame_show, flag_draw=True):
     cv2.rectangle(frame_show, (x1, y1), (x2, y2), (0, 255, 0), 2) # рисуем прямоугольник на изображении
     frame_crop=cv2.GaussianBlur(frame_crop_show,(5,5),cv2.BORDER_DEFAULT) # делаем размытие по гауссу
 
+    y_old=0
     color = "red_up"  # установление цвета знака который нужно найти
     x_red_banka = None # обнуление х координаты красного знака
     y_red_banka = None # обнуление у координаты красного знака
@@ -252,18 +253,24 @@ def Find_box(frame_show, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
         area = cv2.contourArea(contour) # вычисляем площадь найденного контура
         if area > 900:
-            x_red_banka = x + w/2 # записываем х координату найденного контура
-            y_red_banka = y + h # записываем у найденного контура
-            area_red_banka = area # записываем площадь найденного контура
-            if flag_draw:
-                c = (0, 0, 255)
-                if color == "green":
-                    c = (0, 255, 0)
-                cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), c, 2)
-                cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),
-                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,c, 2)
-                cv2.putText(frame_show, str(x + w / 2), (x + x1, y - 40 + y1),
-                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,(255,255,255), 2)
+            if y_old<y+h:
+                y_old=y+h
+                if x+w/2>275:
+                    x_red_banka = int(x+(abs(275-(x+w/2))/225)*(150-(y+h))/2)
+                else:
+                    x_red_banka = int((x+w)-(abs(275-(x+w/2))/225)*(150-(y+h))/2)
+
+                y_red_banka = y + h
+                area_red_banka = area
+                if flag_draw:
+                    c = (0, 0, 255)
+                    if color == "green":
+                        c = (0, 255, 0)
+                    cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), c, 2)
+                    cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),
+                                cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,c, 2)
+                    cv2.putText(frame_show, str(x_red_banka)+ " " +str(y_red_banka), (x + x1, y - 40 + y1),
+                                cv2.FONT_HERSHEY_COMPLEX_SMALL, 1,(255,255,255), 2)
 
     color = "green"
     x_green_banka = None # обнуление х координаты зеленого знака
@@ -276,18 +283,24 @@ def Find_box(frame_show, flag_draw=True):
         x, y, w, h = cv2.boundingRect(contour) # Создаем прямоугольник вокруг контура
         area = cv2.contourArea(contour) # вычисляем площадь найденного контура
         if area > 900:
-            x_green_banka = x + w / 2 # записываем х координату найденного контура
-            y_green_banka = y + h # записываем у найденного контура
-            area_green_banka = area # записываем площадь найденного контура
-            if flag_draw:
-                c = (0, 0, 255)
-                if color == "green":
-                    c = (0, 255, 0)
-                cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), c, 2)
-                cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),
-                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, c, 2)
-                cv2.putText(frame_show, str(x + w / 2), (x + x1, y - 40 + y1),
-                            cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 2)
+            if y_old<y+h:
+                y_old=y+h
+                if x+w/2>275:
+                    x_green_banka = int(x+(abs(275-(x+w/2))/225)*(150-(y+h))/2)
+                else:
+                    x_green_banka = int(x+w - (abs(275-(x+w/2))/225)*(150-(y+h))/2)
+                y_green_banka = y + h
+                area_green_banka = area
+                if flag_draw:
+                    c = (0, 0, 255)
+                    if color == "green":
+                        c = (0, 255, 0)
+                    cv2.rectangle(frame_crop_show, (x, y), (x + w, y + h), c, 2)
+                    cv2.putText(frame_show, str(round(area, 1)), (x + x1, y - 20 + y1),
+                                cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, c, 2)
+                    cv2.putText(frame_show, str(x_green_banka)+ " " +str(y_green_banka), (x + x1, y - 40 + y1),
+                                cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 2)
+
 
     return x_red_banka, y_red_banka, area_red_banka, x_green_banka, y_green_banka, area_green_banka  # возвращение значений
 
