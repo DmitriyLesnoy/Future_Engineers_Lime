@@ -56,13 +56,17 @@ We use the Wifi network to communicate with the robot.
 
        SYSTEMRE QUEIMENTS FOR WORKING WITH THE FUTURE ENGINEERS PROGECT:
        
-1. The operating system of the computer you will be working on is Windows 10
-2. Program interpreter of the python language - PyCharm.
-3. Programming language - Python 3.9.
-4. The presence of a browser
-5. Access to the repository on Github
+1. Programming environment - PyCharm.
+2. Programming language - Python 3.9.
+3. Access to the repository on Github and the installed project folder from the repository
+4. Bitvise SSH Client
+6. presence of certain files on Raspberry Pi and PyBoard
+7. The operating system of the computer you will be working on is Windows 10
+
 Installing the required components:
-  1) Installing PyCharm
+
+  1) Installing PyCharm:
+  
 a) Go to PyCharm's official website official website
   ![image](https://user-images.githubusercontent.com/64408062/130711781-79ee401e-7e02-49a1-920c-66a4b4726c01.png)
   
@@ -73,7 +77,9 @@ d) Next, the installation file will be downloaded
  
 e) After installing it open it and run the file
 f) Next, select the parameters you need.
-  2) Installing python language version 3.9
+
+  2) Installing python language version 3.9:
+
 a) Go to python official site
 ![image](https://user-images.githubusercontent.com/64408062/130711815-037e32f3-28fa-4c32-aa2f-7c8cdf1639d9.png)
 
@@ -98,6 +104,7 @@ i) Then go to this section and select the language that you installed G
 ![image](https://user-images.githubusercontent.com/64408062/130711858-8a8aa72c-8fae-4fef-ae64-9f9a2603bfbf.png)
 
   3) Installing the project folder from the Github repository:
+
 a) You need to go to the link to the Github repository
 ![image](https://user-images.githubusercontent.com/64408062/130711877-10222987-3505-4b5d-99ce-d9abd88591ed.png)
 
@@ -111,6 +118,7 @@ d) Then unzip the file to a regular folder
 ![image](https://user-images.githubusercontent.com/64408062/130711920-75e5f5cc-c9a7-4fbc-87e3-0bccbd82862f.png)
 
   4) Installing Bitvise SSH Client:
+
 a) Go to the official website of the program:![image](https://user-images.githubusercontent.com/64408062/134121813-e6b47f4c-e2d8-4a4e-a426-65c70268e1ca.png)
 
 b) Click on the download button![image](https://user-images.githubusercontent.com/64408062/134121821-8c0e108c-720e-46a4-820f-70513c89bafa.png)
@@ -122,6 +130,12 @@ d) Click on the Download Bitvise SSH Client button![image](https://user-images.g
 e) Then the download of the installation file will start.
 
 f) When the download is finished open the installation file and finish installing the program.  
+
+5)Need to download RobotAPI.py , autostart.py , INGENEERS.py  files to Raspberry Pi
+Detailed installation instructions at this link https://raspberrypi-ru.com/%D0%BF%D0%B5%D1%80%D0%B5%D0%B4%D0%B0%D1%87%D0%B0-%D1%84%D0%B0%D0%B9%D0%BB%D0%BE%D0%B2-%D0%BC%D0%B0%D0%BB%D0%B8%D0%BD%D0%B0-ssh/
+
+It is also necessary to upload files main.py, module.py to PyBoard.
+To do this, you need to connect PyBoard to your computer using a Micro-USB cable. Then move your main.py and module.py files to the microcontroller
 
 
   Starting the robot:
