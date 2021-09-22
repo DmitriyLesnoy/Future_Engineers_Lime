@@ -62,7 +62,7 @@ We use the Wifi network to communicate with the robot.
 4. The presence of a browser
 5. Access to the repository on Github
 Installing the required components:
-1) Installing PyCharm
+  1) Installing PyCharm
 a) Go to PyCharm's official website official website
   ![image](https://user-images.githubusercontent.com/64408062/130711781-79ee401e-7e02-49a1-920c-66a4b4726c01.png)
   
@@ -73,7 +73,7 @@ d) Next, the installation file will be downloaded
  
 e) After installing it open it and run the file
 f) Next, select the parameters you need.
-2) Installing python language version 3.9
+  2) Installing python language version 3.9
 a) Go to python official site
 ![image](https://user-images.githubusercontent.com/64408062/130711815-037e32f3-28fa-4c32-aa2f-7c8cdf1639d9.png)
 
@@ -97,7 +97,7 @@ h) Then click on the Settings button
 i) Then go to this section and select the language that you installed G
 ![image](https://user-images.githubusercontent.com/64408062/130711858-8a8aa72c-8fae-4fef-ae64-9f9a2603bfbf.png)
 
-3) Installing the project folder from the Github repository:
+  3) Installing the project folder from the Github repository:
 a) You need to go to the link to the Github repository
 ![image](https://user-images.githubusercontent.com/64408062/130711877-10222987-3505-4b5d-99ce-d9abd88591ed.png)
 
@@ -110,7 +110,7 @@ c) The download of the project archive should start
 d) Then unzip the file to a regular folder
 ![image](https://user-images.githubusercontent.com/64408062/130711920-75e5f5cc-c9a7-4fbc-87e3-0bccbd82862f.png)
 
-4) Installing Bitvise SSH Client:
+  4) Installing Bitvise SSH Client:
 a) Go to the official website of the program:![image](https://user-images.githubusercontent.com/64408062/134121813-e6b47f4c-e2d8-4a4e-a426-65c70268e1ca.png)
 
 b) Click on the download button![image](https://user-images.githubusercontent.com/64408062/134121821-8c0e108c-720e-46a4-820f-70513c89bafa.png)
@@ -124,7 +124,7 @@ e) Then the download of the installation file will start.
 f) When the download is finished open the installation file and finish installing the program.  
 
 
-Starting the robot:
+  Starting the robot:
 
 a) Insert the 3.7 Volt accumulators 18650 into the battery compartment of the robot. Do not confuse + and - batteries to avoid consequences.
 
@@ -132,7 +132,7 @@ b) Press the red power button on the robot.
 
 c) When you turn on the PyBoard microcontroller, a sound with an increase in tone will sound, wait until the Raspberry Pi microcomputer starts up, after it finishes starting it will play a melody - a double trill.
 
-Uploading the project to the robot:
+  Uploading the project to the robot:
 
 a) Open PyCharm, click on the File button in the upper left corner.
 ![image](https://user-images.githubusercontent.com/64408062/130712044-5ea0ebe5-6276-4208-be29-139d3f6cd5a3.png)
@@ -187,7 +187,7 @@ q) Clicking on the button will open a list of robots available to you, select th
 r) When the robot and computer are connected to each other, there will be an inscription:
 ![image](https://user-images.githubusercontent.com/64408062/130712231-f481638b-ce72-46cb-bffb-f21d47d068cd.png)
 
-Ways to connect to individual components and share files: 
+  Ways to connect to individual components and share files: 
 Raspberry Pi:
   To connect to a Raspberry Pi microcomputer, you need to connect it to a monitor via an HDMI cable to display an image, and connect it to a computer via an Ethernet cable. Then, through the command line using the Ifconfig command, we get the Raspberry Pi address data. Find the Ethernet IP address. Enter the address, password, port and username into the Bitvise SSH Client program. This way we can exchange files with the Raspberry Pi. 
 
