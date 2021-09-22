@@ -5,7 +5,7 @@ Comand LIME, Vladivostok, category Future Ingineers
 In the development of the LIME team project for the WRO competition in
 the Future Engineers category was attended by Lineisky Akim -
 programmer, designer, Ivan Terekhov - engineer,
-electronics engineer, Glamozdin Yuri - our mentor and trainer.
+electronics engineer, Roman Sergeecich - our mentor and trainer.
                   
        PROGRAMM ALGORINT:
                   
@@ -13,8 +13,6 @@ The robot was programmed in Python version 3.9.3. The interpreter was PyCharm.
                                                                                                                 
 To connect the robot and the computer, take Ethernet cable to which the computer is connected. Next, using the StartRobot application, we load the program file onto the Raspberry microcomputer. He saves it to the SD card and then executes the code.
                                                                                                                                                  
-As the code is executed, the Raspberry microcomputer continuously sends data packets to PyBoard with its unique number. The PyBoard microcontroller checks that the packet matches this number, in case of a packet malfunction, rejects it. Then the microcontroller already sends commands to the motor and servo
-
 in the main program of our project, we use the cv2 libraries, regulators, RobotAPI and others.
 
 Initially, we get an image from a 640x480 camera. Then we go straight until we find an image in a special HSV mask of blue or orange color no less than a certain number of pixels. It depends on what color we see first, we will understand in which direction we have to move in the future. After we have determined the direction of movement, we turn in the appropriate direction. If the blue line is the first, the direction of movement is counterclockwise, we turn to the left, if the orange line is the first, from the direction of movement is clockwise, we turn to the left.
