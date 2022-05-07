@@ -23,9 +23,8 @@ Otherwise, if this qualification flag is equal to False, the robot will not chan
                                                                                                                                                                                                                                                                                                                                        
 Our algorithm for the movement of a robot with signs is built from several stages (stages).
 These are: Movement to the line
-         Turning stage - left or right
-         Independent movement
-         Finish
+           Independent movement
+           Finish
 The first stage - movement to the line has already been mentioned above. The robot drives straight until it sees a blue or orange line. It depends on which line he sees first, he will understand in which direction he will need to move in the future.
 
 The second stage - Independent movement is divided into 2 sub-parts: the movement regulator and the block of the regulator of rotation and steering of signs.
