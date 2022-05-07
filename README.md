@@ -1,13 +1,13 @@
 # Future_Ingeneers
-progect to WRO 2021
+progect to WRO 2022
 Comand LIME, Vladivostok, category Future Ingineers
 
 In the development of the LIME team project for the WRO competition in
 the Future Engineers category was attended by Lineisky Akim -
 programmer, designer, Ivan Terekhov - engineer,
-electronics engineer, Roman Sergeecich - our mentor and trainer.
+electronics engineer, Anton Alekseevich - our mentor and trainer.
                   
-       PROGRAMM ALGORINT:
+# Programm algoritm
                   
 The robot was programmed in Python version 3.9.3. The interpreter was PyCharm.
                                                                                                                 
@@ -52,7 +52,7 @@ To load a specific program into the robot, we use a special program called "Star
 
 We use the Wifi network to communicate with the robot.
 
-       SYSTEMRE QUEIMENTS FOR WORKING WITH THE FUTURE ENGINEERS PROGECT:
+# Systeme queiments for working with the Future Ingeneers progrect:
        
 1. Programming environment - PyCharm.
 2. Programming language - Python 3.9.
