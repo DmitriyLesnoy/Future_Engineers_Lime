@@ -2376,18 +2376,9 @@ dropVar.set("Connect to robot")
 dropVar_inet = tk.StringVar()
 dropVar_inet.set("Connect to robot")
 
-# list_combobox.append(["1", "192.168.88.21", "robot", "l"])
-# list_combobox.append(["2", "192.168.88.22", "robot", "l"])
-# list_combobox.append(["3", "192.168.88.23", "robot", "l"])
-# list_combobox.append(["4", "192.168.88.24", "robot", "l"])
-# list_combobox.append(["5", "192.168.88.25", "robot", "l"])
-# list_combobox.append(["6", "192.168.88.26", "robot", "l"])
-# list_combobox.append(["7", "192.168.88.27", "robot", "l"])
-# list_combobox.append(["8", "192.168.88.29", "robot", "l"])
-# list_combobox.append(["8", "192.168.88.30", "robot", "l"])
-# list_combobox.append(["8", "192.168.88.170", "robot", "l"])
-#
-list_combobox.append(["8", "192.168.4.1", "robot", "l"])
+list_combobox.append(["8", "192.168.10.1", "robot", "l"])
+
+list_combobox.append(["local", "raspberrypi", "robot", "l"])
 
 list_combobox.append(["scan_inet", " "])
 list_combobox_inet.append(["scan_inet", " "])
