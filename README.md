@@ -49,7 +49,7 @@ To load a specific program into the robot, we use a special program called "Star
              "Video" - launches video received in real time from the robot's camera
              "Connect to robot" - opens a menu of available robots to connect
 
-We use the Wifi network to communicate with the robot.
+We use the Wifi network and Ethernet link to communicate with the robot 
 
 # Systeme queiments for working with the Future Ingeneers progrect:
        
