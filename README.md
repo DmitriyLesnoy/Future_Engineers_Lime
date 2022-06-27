@@ -13,7 +13,7 @@ The robot was programmed in Python version 3.9.3. The interpreter was PyCharm.
                                                                                                                 
 To connect the robot and the computer, take Ethernet cable to which the computer is connected. Next, using the StartRobot application, we load the program file onto the Raspberry microcomputer. He saves it to the SD card and then executes the code.
                                                                                                                                                  
-in the main program of our project, we use the cv2 libraries, regulators, RobotAPI and others.
+in the main program of our project, we use the cv2 libraries, regulators, GPIORobot and others.
 
 Initially, we get an image from a 640x480 camera. Then we go straight until we find an image in a special HSV mask of blue or orange color no less than a certain number of pixels. It depends on what color we see first, we will understand in which direction we have to move in the future. After we have determined the direction of movement, we turn in the appropriate direction. If the blue line is the first, the direction of movement is counterclockwise, we turn to the left, if the orange line is the first, from the direction of movement is clockwise, we turn to the left.
                                                                                                                                                                                                    
@@ -57,7 +57,7 @@ We use the Wifi network to communicate with the robot.
 2. Programming language - Python 3.9.
 3. Access to the repository on Github and the installed project folder from the repository
 4. Bitvise SSH Client
-6. presence of certain files on Raspberry Pi and PyBoard
+6. presence of certain files on Raspberry Pi
 7. The operating system of the computer you will be working on is Windows 10
 
 Installing the required components:
@@ -201,6 +201,3 @@ r) When the robot and computer are connected to each other, there will be an ins
   Ways to connect to individual components and share files: 
 Raspberry Pi:
   To connect to a Raspberry Pi microcomputer, you need to connect it to a monitor via an HDMI cable to display an image, and connect it to a computer via an Ethernet cable. Then, through the command line using the Ifconfig command, we get the Raspberry Pi address data. Find the Ethernet IP address. Enter the address, password, port and username into the Bitvise SSH Client program. This way we can exchange files with the Raspberry Pi. 
-
-PyBoard:
-  To upload or download files to the PyBoard microcontroller, you need to connect it to the computer using the Micro - USB cable. Then you can share files. 
