@@ -1,39 +1,26 @@
-# Future_Engineers
-progect to WRO 2022
-Comand LIME, Vladivostok, category Future Engineers
-
-In the development of the LIME team project for the WRO competition in
-the Future Engineers category was attended by Lineisky Akim -
-programmer, designer, Ivan Terekhov - engineer,
-electronics engineer, Anton Alekseevich - our mentor and trainer.
+# Future_Engineers_LIME
+project for WRO 2022 Comand LIME, Vladivostok, category Future Engineers
                   
 # Programm algoritm
                   
 The robot was programmed in Python version 3.9.3. The interpreter was PyCharm.
                                                                                                                 
-To connect the robot and the computer, take Ethernet cable to which the computer is connected. Next, using the StartRobot application, we load the program file onto the Raspberry microcomputer. He saves it to the SD card and then executes the code.
-                                                                                                                                                 
-in the main program of our project, we use the cv2 libraries, regulators, GPIORobot and others.
+To connect the robot and the computer, take the Ethernet cable to which the computer is connected. Next, using the StartRobot application, we download the program file to the Raspberry microcomputer. It saves it to the SD card and then executes the code.
 
-Initially, we get an image from a 640x480 camera. Then we go straight until we find an image in a special HSV mask of blue or orange color no less than a certain number of pixels. It depends on what color we see first, we will understand in which direction we have to move in the future. After we have determined the direction of movement, we turn in the appropriate direction. If the blue line is the first, the direction of movement is counterclockwise, we turn to the left, if the orange line is the first, from the direction of movement is clockwise, we turn to the left.
-                                                                                                                                                                                                   
-If we need to pass a qualifying race or run a program without taking into account the signs, we have a special variable - a flag denoting qualifications.                                                                                                                                                                                                         
-If it is set equal to True, the program will turn off the part responsible for reactions to road signs and will not react to them, it will just eat in a circle in the right direction.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-Otherwise, if this qualification flag is equal to False, the robot will not change anything or disable any part of the program. He will go to the turn line, determine its color, and accordingly determine the direction of further movement, and will go 3 circles, bypassing the red signs on the right, and the green signs on the left.
-                                                                                                                                                                                                                                                                                                                                       
-Our algorithm for the movement of a robot with signs is built from several stages (stages).
-These are: Movement to the line
-           Independent movement
-           Finish
-The first stage - movement to the line has already been mentioned above. The robot drives straight until it sees a blue or orange line. It depends on which line he sees first, he will understand in which direction he will need to move in the future.
+in the main program of our project, we use the cv2 libraries, regulators, GPIORobot, numpy, time and others.
 
-The second stage - Independent movement is divided into 2 sub-parts: the movement regulator and the block of the regulator of rotation and steering of signs.
+Initially, we get an image from a 640x480 camera. Then we go straight until we find an image in a special HSV mask of blue or orange color that is not less than a certain number of pixels. From what color we see first, we will understand in which direction we have to move in the future. After we have determined the direction of movement, we turn in the appropriate direction. If the blue line is the first, then the direction of movement is counterclockwise, turn left, if the orange line is the first, then from the direction of movement clockwise, turn left. After qualifying, we drive along the regulator until the next turn, and in the final we dress up to the turn, taking into account the recognition and detour of signs.
 
-In the motion controller, the robot cuts out a part of the image received by the camera and according to a special HSV mask from the left or right edge, depending on the direction. In this way, we get a piece of the black line - the side along which we will go.
-We define its y coordinates and outline height. Putting them together, we get a certain numerical distance of the robot from the edge - the side.
-In the second part - Taxiing signs. We use HSV to find green and red signs, and then the closest to us - a larger contour. Then, knowing the direction and the color of the nearest sign, we decide in which direction we need to wrap. We add this cislo to the general error of the regulator, as a result of which the robot turns in the right direction.
+In the final program, in contrast to the qualification, there are functions for recognizing signs, an algorithm for calculating the departure from them, and the logic for compiling time maps and arranging signs
+In qualifying, things are a little simpler: there are no functions for signs and there is no corresponding logic for calculating the departure. We have at our disposal sensors for recognizing the black border, blue and orange lines on corners, the function of displaying telemetry data. For the most part, the qualification program is the basis for the final program, because in the final you need all the basic recognition functions and algorithms for orientation, line counting as in the qualification.
 
-The Finish, Hand Control and HSV tuning stages are pretty simple.
+Our robot movement algorithm with signs is built from several stages (stages). These are: Start, Independent movement, manual control. In the first stage - the robot starts immediately after loading the program, where the robot aligns the torvomotor and gives a signal and downloads. After pressing the start button, the program proceeds to the second stage
+
+The second stage - Independent movement is divided into 2 sub-parts: the traffic controller and the turn control and sign control unit.
+
+In the motion controller, the robot cuts out a part of the image received by the camera and a special HSV mask from the left or right edge, depending on the direction. Thus, we get a piece of the black line - the side on which we will go. We define its y coordinates and the height of the outline. Adding them together, we get a certain numerical distance of the robot from the edge - the side. In the second part - Taxiing signs. With the help of HSV, we find the green and red signs, and then the closest one to us - a larger contour. Then, knowing the direction and color of the nearest sign, we decide in which direction we need to turn. We add this number to the total controller error, as a result of which the robot turns in the right direction.
+
+The remaining stages of the algorithm: Finish, Hand Control are quite simple.
 
 Finish - the robot travels a certain distance in time after passing 12 turns - 3 laps.
 
