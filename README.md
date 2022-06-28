@@ -1,6 +1,6 @@
-# Future_Ingeneers
+# Future_Engineers
 progect to WRO 2022
-Comand LIME, Vladivostok, category Future Ingineers
+Comand LIME, Vladivostok, category Future Engineers
 
 In the development of the LIME team project for the WRO competition in
 the Future Engineers category was attended by Lineisky Akim -
