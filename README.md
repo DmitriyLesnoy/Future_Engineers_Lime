@@ -8,14 +8,14 @@ At the root of the repository are the files necessary for working with the proje
 # Files
 
 Files:
-RobotAPI.py, GPIORobot.py - firmware for robot control
-autostart.py - programs to start the desired program when loading from the disabled state of the robot
-StartRobot.py - an application for conveniently uploading files to the robot and viewing video from the camera
+RobotAPI.py, GPIORobot.py - firmware for robot controln                                                                                                                 
+autostart.py - programs to start the desired program when loading from the disabled state of the robot                                                                 
+StartRobot.py - an application for conveniently uploading files to the robot and viewing video from the camera                                                         
 Kvalificattion.py, Final.py - programs respectively for the qualifying and final rounds
 
 Folders:
-team_photo - a folder with photos of the team in a fun and formal setting
-robot_photo - folder with robot photos from all 6 types
+team_photo - a folder with photos of the team in a fun and formal setting                                                                                               
+robot_photo - folder with robot photos from all 6 types                                                                                                                 
 schematic - a folder with files denoting our electrical circuit of the robot and the mechanical circuit.
  
 Link:
