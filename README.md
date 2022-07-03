@@ -3,6 +3,10 @@ project for WRO 2022 Comand LIME, Vladivostok, category Future Engineers
                   
 At the root of the repository are the files necessary for working with the project, these are:
 
+В разработке командного проекта LIME для конкурса WRO в номинации «Будущие инженеры» принимали участие Линейский Аким - программист, конструктор, Иван Терехов - инженер, электронщик, Антон Алексеевич - наш наставник и тренер.
+
+# Files
+
 Files:
 RobotAPI.py, GPIORobot.py - firmware for robot control
 autostart.py - programs to start the desired program when loading from the disabled state of the robot
